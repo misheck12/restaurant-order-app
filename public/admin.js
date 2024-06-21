@@ -42,7 +42,7 @@ async function fetchMenu() {
 }
 
 function displayMenu(menu) {
-    const menuList = document.getElementById('menuSection');
+    const menuList = document.getElementById('menuList');
     menuList.innerHTML = menu.map(item => `
         <div class="menu-item">
             <span>${item.name} (K${item.price.toFixed(2)})</span>
@@ -106,7 +106,7 @@ async function editItem(itemId) {
                 await fetchAndDisplayMenu();
             }
         } catch (error) {
-            console.error('Error editing item:', error);
+            console.error('Error updating item:', error);
         }
     }
 }
@@ -136,7 +136,7 @@ function displayExtras(extras) {
     const extrasList = document.getElementById('extrasList');
     extrasList.innerHTML = extras.map(extra => `
         <div class="extra-item">
-            <span>${extra.name} (K${extra.price.toFixed(2)}) - ${extra.category}</span>
+            <span>${extra.name} (K${extra.price.toFixed(2)})</span>
             <div>
                 <button onclick="editExtra('${extra.id}')">Edit</button>
                 <button onclick="deleteExtra('${extra.id}')">Delete</button>
@@ -167,8 +167,7 @@ async function addExtra() {
 
         const result = await response.json();
         if (result.success) {
-            await fetchAndDisplayExtras
-            ();
+            await fetchAndDisplayExtras();
             document.getElementById('extrasForm').reset();
         }
     } catch (error) {
@@ -179,7 +178,7 @@ async function addExtra() {
 async function editExtra(extraId) {
     const extraName = prompt("Enter new extra name:");
     const extraPrice = prompt("Enter new extra price (K):");
-    const extraCategory = prompt("Enter new category (breakfast/lunch):");
+    const extraCategory = prompt("Enter new extra category:");
     if (extraName !== null && extraPrice !== null && extraCategory !== null) {
         const updatedExtra = {
             id: extraId,
@@ -202,7 +201,7 @@ async function editExtra(extraId) {
                 await fetchAndDisplayExtras();
             }
         } catch (error) {
-            console.error('Error editing extra:', error);
+            console.error('Error updating extra:', error);
         }
     }
 }
@@ -229,83 +228,41 @@ async function fetchOrders() {
 }
 
 function categorizeOrders(orders) {
-    const pendingOrders = [];
-    const preparingOrders = [];
-    const readyOrders = [];
-    const completedOrders = [];
+    const pendingOrders = orders.filter(order => order.status === 'pending');
+    const preparingOrders = orders.filter(order => order.status === 'preparing');
+    const readyOrders = orders.filter(order => order.status === 'ready');
+    const completedOrders = orders.filter(order => order.status === 'completed');
 
-    orders.forEach(order => {
-        switch (order.status) {
-            case 'pending':
-                pendingOrders.push(order);
-                break;
-            case 'preparing':
-                preparingOrders.push(order);
-                break;
-            case 'ready':
-                readyOrders.push(order);
-                break;
-            case 'completed':
-                completedOrders.push(order);
-                break;
-            default:
-                console.warn(`Unknown status for order ${order.orderNumber}: ${order.status}`);
-                break;
-        }
-    });
-
-    displayOrders({
-        pendingOrders,
-        preparingOrders,
-        readyOrders,
-        completedOrders
-    });
+    displayOrders(pendingOrders, 'pendingOrderList');
+    displayOrders(preparingOrders, 'preparingOrderList');
+    displayOrders(readyOrders, 'readyOrderList');
+    displayOrders(completedOrders, 'completedOrderList');
 }
 
-function displayOrders(orderCategories) {
-    displayOrderCategory('pendingOrders', orderCategories.pendingOrders);
-    displayOrderCategory('preparingOrders', orderCategories.preparingOrders);
-    displayOrderCategory('readyOrders', orderCategories.readyOrders);
-    displayOrderCategory('completedOrders', orderCategories.completedOrders);
-}
-
-function displayOrderCategory(categoryId, orders) {
-    const orderList = document.getElementById(categoryId);
-    if (!orders || !Array.isArray(orders)) {
-        orderList.innerHTML = '<p>No orders available.</p>';
-        return;
-    }
+function displayOrders(orders, elementId) {
+    const orderList = document.getElementById(elementId);
     orderList.innerHTML = orders.map(order => `
-        <div class="order-item">
-            <div class="order-info">
-                <span>Order #${order.orderNumber}</span><br>
-                <span>Payment Method: ${order.paymentMethod || 'N/A'}</span><br>
-                <span>Name: ${order.name}</span><br>
-                <span>Mobile Number: ${order.phoneNumber || 'N/A'}</span><br>
-                <span>Delivery: ${order.delivery ? 'Yes' : 'No'}</span><br>
-                <span>Total: K${order.total.toFixed(2)}</span><br>
-                <span>Status: ${order.status}</span>
-            </div>
-            <div class="order-items">
-                <h3>Ordered Items:</h3>
-                <ul>
-                    ${order.items ? order.items.map(item => `
-                        <li>${item.name} (Quantity: ${item.quantity}) - K${(item.quantity * item.price).toFixed(2)}</li>
-                    `).join('') : '<li>No items found</li>'}
-                </ul>
-            </div>
-            <div class="order-actions">
-                <button onclick="deleteOrder('${order.orderNumber}')">Delete</button>
-                <button onclick="updateOrderStatus('${order.orderNumber}')">Update Status</button>
-            </div>
-        </div>
+        <tr>
+            <td>${order.orderNumber}</td>
+            <td>${order.customerName}</td>
+            <td>${order.total.toFixed(2)}</td>
+            <td>
+                <button onclick="updateOrderStatus('${order.id}', 'preparing')">Prepare</button>
+                <button onclick="updateOrderStatus('${order.id}', 'ready')">Ready</button>
+                <button onclick="updateOrderStatus('${order.id}', 'completed')">Complete</button>
+            </td>
+        </tr>
     `).join('');
 }
 
-async function deleteOrder(orderNumber) {
+async function updateOrderStatus(orderId, status) {
     try {
-        const response = await fetch(`/api/orders/${orderNumber}`, {
-            method: 'DELETE'
+        const response = await fetch(`/api/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
         });
 
         const result = await response.json();
@@ -313,28 +270,6 @@ async function deleteOrder(orderNumber) {
             await fetchAndDisplayOrders();
         }
     } catch (error) {
-        console.error('Error deleting order:', error);
-    }
-}
-
-async function updateOrderStatus(orderNumber) {
-    const newStatus = prompt("Enter new status (e.g., pending, preparing, ready, completed):");
-    if (newStatus) {
-        try {
-            const response = await fetch(`/api/orders/${orderNumber}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: newStatus })
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                await fetchAndDisplayOrders();
-            }
-        } catch (error) {
-            console.error('Error updating order status:', error);
-        }
+        console.error('Error updating order status:', error);
     }
 }
