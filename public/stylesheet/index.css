@@ -27,7 +27,7 @@ body {
     justify-content: center;
     background-color: #007bff;
     color: #fff;
-    padding: 10px;
+    padding: 40px;
 }
 
 .nav-bar ul {
@@ -43,11 +43,11 @@ body {
 }
 
 .nav-bar ul li a {
-    color: #fff;
     text-decoration: none;
     font-weight: bold;
     color: #333;
     font-size: medium;
+    padding: 20px;
 }
 
 .title {
