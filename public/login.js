@@ -16,7 +16,7 @@ async function login() {
 
         if (response.ok) {
             loginError.textContent = '';
-            window.location.href = '/admin-panel.html'; // Redirect to admin panel on successful login
+            window.location.href = '/admin.html'; // Redirect to admin panel on successful login
         } else {
             loginError.textContent = result.message;
         }
