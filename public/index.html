@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./stylesheet/index.css">
+    <title>Restaurant Order Form</title>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-bar">
+            <ul>
+                <li><a href="./order-status.html">Check Your Order</a></li>
+            </ul>
+        </nav>
+        <h1 class="title">Restaurant Order Form</h1>
+    </header>
+    
+    <form id="orderForm" class="order-form">
+        <div class="menu-section">
+            <h2>Menu</h2>
+            <div id="menuContainer" class="menu-container"></div>
+            
+            <h2>Extras</h2>
+            <div id="extrasContainer" class="menu-container"></div>
+        </div>
+
+        <div class="delivery-section">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="delivery" name="delivery">
+                    Delivery (K5)
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="button" onclick="proceedToCheckout()" class="submit-button">Proceed to Checkout</button>
+        </div>
+    </form>
+
+    <script src="./index.js"></script>
+</body>
+</html>

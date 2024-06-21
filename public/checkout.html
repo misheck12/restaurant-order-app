@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./stylesheet/checkout.css">
+    <title>Checkout</title>
+    <style>
+        /* Additional inline styles for transparency */
+        body {
+            background-color: #f0f0f0; /* Setting a light gray background */
+        }
+        .checkout-container {
+            max-width: 600px; /* Limiting container width for better readability */
+            margin: 20px auto; /* Centering the container */
+            background-color: #fff; /* White background */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
+            border-radius: 5px; /* Rounded corners */
+        }
+        .payment-options {
+            margin-top: 20px; /* Adding margin between payment options and other content */
+        }
+        .payment-options .withdrawal-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Checkout</h1>
+    </header>
+    <div class="checkout-container">
+        <div class="checkout-content">
+            <div id="orderSummary"></div>
+            <div class="payment-options">
+                <h3>Payment Options</h3>
+                <div class="form-group">
+                    <label for="paymentMethod">Select Payment Method:</label>
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="airtel">Airtel Money</option>
+                        <option value="mtn">MTN Money</option>
+                        <option value="zamtel">Zam Kwacha</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Mobile Number:</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                </div>
+                <div class="withdrawal-info">
+                    <p>For mobile money withdrawals:</p>
+                    <ul>
+                        <li>0960231978 (Airtel Money)</li>
+                        <li>0777945779 (MTN Money)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="submitOrder()" class="submit-button">Submit Order</button>
+            </div>
+            <div class="total" id="totalCost"></div>
+            <div class="order-number" id="orderNumber"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const order = JSON.parse(localStorage.getItem('order'));
+            displayOrder(order);
+        });
+
+        function displayOrder(order) {
+            const orderSummary = document.getElementById('orderSummary');
+            const itemsList = order.items.map(item => `
+                <div class="order-item">
+                    <span>${item.name} (K${item.price} each): ${item.quantity}</span>
+                </div>
+            `).join('');
+
+            // Calculate service fee and delivery fee
+            const serviceFee = 2; // Example service fee
+            const deliveryFee = 5; // Example delivery fee
+            let totalItemsCost = 0;
+
+            order.items.forEach(item => {
+                totalItemsCost += item.price * item.quantity;
+            });
+
+            const total = totalItemsCost + serviceFee + (order.delivery ? deliveryFee : 0);
+
+            orderSummary.innerHTML = `
+                <h2>Order Summary</h2>
+                ${itemsList}
+                <div class="order-total">Total: K${totalItemsCost.toFixed(2)}</div>
+                <div class="service-fee">Service Fee: K${serviceFee.toFixed(2)}</div>
+                ${order.delivery ? `<div class="delivery-fee">Delivery Fee: K${deliveryFee.toFixed(2)}</div>` : ''}
+                <div class="total-with-fees">Total with Fees: K${total.toFixed(2)}</div>
+            `;
+        }
+
+        async function submitOrder() {
+            const order = JSON.parse(localStorage.getItem('order'));
+            order.paymentMethod = document.getElementById('paymentMethod').value;
+            order.name = document.getElementById('name').value;
+            order.phoneNumber = document.getElementById('phoneNumber').value;
+
+            // Add 'pending' status to the order
+            order.status = 'pending';
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('totalCost').innerText = `Total Cost: K${order.total}`;
+                    document.getElementById('orderNumber').innerText = `Order Number: ${result.orderNumber}`;
+                    localStorage.removeItem('order');
+                    // Redirect to order status page after 8 seconds
+                    setTimeout(() => {
+                        window.location.href = './order-status.html';
+                    }, 8000); // 8000 milliseconds = 8 seconds
+                } else {
+                    document.getElementById('orderNumber').innerText = 'Failed to submit order.';
+                }
+            } catch (error) {
+                console.error('Error submitting order:', error);
+                document.getElementById('orderNumber').innerText = 'Failed to submit order.';
+            }
+        }
+    </script>
+</body>
+</html>

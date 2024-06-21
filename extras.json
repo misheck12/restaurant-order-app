@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1718879221550",
+    "name": "impwa",
+    "price": 20,
+    "category": "breakfast"
+  },
+  {
+    "id": "1718881750252",
+    "name": "beans",
+    "price": 5,
+    "category": "breakfast"
+  }
+]

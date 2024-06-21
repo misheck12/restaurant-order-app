@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin Panel</title>
+    <style>
+        /* Custom CSS can still be used if needed */
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="pb-3">
+            <h1>Admin Panel</h1>
+        </header>
+        <main>
+            <div class="row">
+                <div class="col-lg-4" id="menuSection">
+                    <section class="menu-section bg-light p-3">
+                        <h2>Menu</h2>
+                        <form id="menuForm">
+                            <div class="form-group">
+                                <label for="itemName">Item Name:</label>
+                                <input type="text" class="form-control" id="itemName" name="itemName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="itemPrice">Item Price (K):</label>
+                                <input type="number" class="form-control" id="itemPrice" name="itemPrice" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" onclick="addItem()">Add Item</button>
+                            </div>
+                        </form>
+                        <div id="menuList" class="item-list mt-3">
+                            <!-- Dynamically filled with menu items -->
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-4">
+                    <section class="extras-section bg-light p-3">
+                        <h2>Extras</h2>
+                        <form id="extrasForm">
+                            <div class="form-group">
+                                <label for="extraName">Extra Name:</label>
+                                <input type="text" class="form-control" id="extraName" name="extraName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="extraPrice">Extra Price (K):</label>
+                                <input type="number" class="form-control" id="extraPrice" name="extraPrice" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="extraCategory">Category:</label>
+                                <select class="form-control" id="extraCategory" name="extraCategory" required>
+                                    <option value="breakfast">Breakfast</option>
+                                    <option value="lunch">Lunch</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" onclick="addExtra()">Add Extra</button>
+                            </div>
+                        </form>
+                        <div id="extrasList" class="item-list mt-3">
+                            <!-- Dynamically filled with extra items -->
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-4">
+                    <section class="orders-section bg-light p-3">
+                        <h2>Orders</h2>
+                        <div class="order-category mt-3" id="pendingOrders">
+                            <h3>Pending Orders</h3>
+                            <table class="table table-bordered" id="pendingOrderTable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Order Number</th>
+                                        <th>Name</th>
+                                        <th>Total (K)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingOrderList">
+                                    <!-- Dynamically filled with pending orders -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="order-category mt-3" id="preparingOrders">
+                            <h3>Preparing Orders</h3>
+                            <table class="table table-bordered" id="preparingOrderTable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Order Number</th>
+                                        <th>Name</th>
+                                        <th>Total (K)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="preparingOrderList">
+                                    <!-- Dynamically filled with preparing orders -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="order-category mt-3" id="readyOrders">
+                            <h3>Ready Orders</h3>
+                            <table class="table table-bordered" id="readyOrderTable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Order Number</th>
+                                        <th>Name</th>
+                                        <th>Total (K)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="readyOrderList">
+                                    <!-- Dynamically filled with ready orders -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="order-category mt-3" id="completedOrders">
+                            <h3>Completed Orders</h3>
+                            <table class="table table-bordered" id="completedOrderTable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Order Number</th>
+                                        <th>Name</th>
+                                        <th>Total (K)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="completedOrderList">
+                                    <!-- Dynamically filled with completed orders -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./admin.js"></script>
+</body>
+</html>
