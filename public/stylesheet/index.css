@@ -40,6 +40,7 @@ body {
     display: inline;
     margin-right: 20px;
     background-color: #ddd;
+    padding: 10px 20px;
 }
 
 .nav-bar ul li a {
@@ -47,7 +48,6 @@ body {
     font-weight: bold;
     color: #333;
     font-size: medium;
-    padding: 20px;
 }
 
 .title {
