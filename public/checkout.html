@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./stylesheet/checkout.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Checkout</title>
     <style>
         /* Additional inline styles for transparency */
@@ -25,20 +25,29 @@
             margin-top: 10px;
             font-size: 0.9rem;
         }
+        .submit-button {
+            display: block;
+            width: 100%;
+            border-radius: 25px;
+            margin-top: 20px;
+        }
+        .order-summary, .total, .order-number {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <header class="header">
+    <header class="header text-center">
         <h1>Checkout</h1>
     </header>
     <div class="checkout-container">
         <div class="checkout-content">
-            <div id="orderSummary"></div>
+            <div id="orderSummary" class="order-summary"></div>
             <div class="payment-options">
                 <h3>Payment Options</h3>
                 <div class="form-group">
                     <label for="paymentMethod">Select Payment Method:</label>
-                    <select id="paymentMethod" name="paymentMethod" required>
+                    <select id="paymentMethod" name="paymentMethod" class="form-control" required>
                         <option value="airtel">Airtel Money</option>
                         <option value="mtn">MTN Money</option>
                         <option value="zamtel">Zam Kwacha</option>
@@ -46,11 +55,11 @@
                 </div>
                 <div class="form-group">
                     <label for="name">Full Name:</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="phoneNumber">Mobile Number:</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" required>
                 </div>
                 <div class="withdrawal-info">
                     <p>For mobile money withdrawals:</p>
@@ -60,8 +69,8 @@
                     </ul>
                 </div>
             </div>
-            <div class="form-group">
-                <button type="button" onclick="submitOrder()" class="submit-button">Submit Order</button>
+            <div class="form-group text-center">
+                <button type="button" onclick="submitOrder()" class="btn btn-primary submit-button">Submit Order</button>
             </div>
             <div class="total" id="totalCost"></div>
             <div class="order-number" id="orderNumber"></div>
