@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const session = require('express-session');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
@@ -19,10 +21,21 @@ try {
     process.exit(1); // Exit if initial data can't be loaded
 }
 
+// Admin credentials
+const adminUsername = 'admin';
+const adminPasswordHash = bcrypt.hashSync('password123', 10); // Hash the admin password
+
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
+
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Note: secure should be true in production
+}));
 
 // Utility functions to save data to JSON files
 function saveMenu() {
@@ -37,12 +50,39 @@ function saveOrders() {
     fs.writeFileSync('orders.json', JSON.stringify(orders, null, 2));
 }
 
+// Authentication middleware
+function isAuthenticated(req, res, next) {
+    if (req.session.user && req.session.user === adminUsername) {
+        return next();
+    } else {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+}
+
+// Admin login endpoint
+app.post('/api/admin/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (username === adminUsername && bcrypt.compareSync(password, adminPasswordHash)) {
+        req.session.user = adminUsername;
+        res.json({ success: true, message: 'Login successful' });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+});
+
+// Admin logout endpoint
+app.post('/api/admin/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ success: true, message: 'Logout successful' });
+});
+
 // Menu endpoints
 app.get('/api/menu', (req, res) => {
     res.json(menu);
 });
 
-app.post('/api/menu', (req, res) => {
+app.post('/api/menu', isAuthenticated, (req, res) => {
     const newItem = req.body;
     newItem.id = Date.now().toString();
     menu.push(newItem);
@@ -50,7 +90,7 @@ app.post('/api/menu', (req, res) => {
     res.json({ success: true });
 });
 
-app.put('/api/menu/:id', (req, res) => {
+app.put('/api/menu/:id', isAuthenticated, (req, res) => {
     const itemId = req.params.id;
     const updatedItem = req.body;
     menu = menu.map(item => item.id === itemId ? updatedItem : item);
@@ -58,7 +98,7 @@ app.put('/api/menu/:id', (req, res) => {
     res.json({ success: true });
 });
 
-app.delete('/api/menu/:id', (req, res) => {
+app.delete('/api/menu/:id', isAuthenticated, (req, res) => {
     const itemId = req.params.id;
     menu = menu.filter(item => item.id !== itemId);
     saveMenu();
@@ -70,7 +110,7 @@ app.get('/api/extras', (req, res) => {
     res.json(extras);
 });
 
-app.post('/api/extras', (req, res) => {
+app.post('/api/extras', isAuthenticated, (req, res) => {
     const newExtra = req.body;
     newExtra.id = Date.now().toString();
     extras.push(newExtra);
@@ -78,7 +118,7 @@ app.post('/api/extras', (req, res) => {
     res.json({ success: true });
 });
 
-app.put('/api/extras/:id', (req, res) => {
+app.put('/api/extras/:id', isAuthenticated, (req, res) => {
     const extraId = req.params.id;
     const updatedExtra = req.body;
     extras = extras.map(extra => extra.id === extraId ? updatedExtra : extra);
@@ -86,7 +126,7 @@ app.put('/api/extras/:id', (req, res) => {
     res.json({ success: true });
 });
 
-app.delete('/api/extras/:id', (req, res) => {
+app.delete('/api/extras/:id', isAuthenticated, (req, res) => {
     const extraId = req.params.id;
     extras = extras.filter(extra => extra.id !== extraId);
     saveExtras();
@@ -121,7 +161,7 @@ app.post('/api/orders', (req, res) => {
     res.json({ success: true, orderNumber: newOrder.orderNumber });
 });
 
-app.delete('/api/orders/:orderNumber', (req, res) => {
+app.delete('/api/orders/:orderNumber', isAuthenticated, (req, res) => {
     const orderNumber = req.params.orderNumber;
     orders = orders.filter(order => order.orderNumber !== orderNumber);
     saveOrders();
@@ -129,7 +169,7 @@ app.delete('/api/orders/:orderNumber', (req, res) => {
 });
 
 // Update order status endpoint
-app.put('/api/orders/:orderNumber/status', (req, res) => {
+app.put('/api/orders/:orderNumber/status', isAuthenticated, (req, res) => {
     const orderNumber = req.params.orderNumber;
     const { status } = req.body;
 
