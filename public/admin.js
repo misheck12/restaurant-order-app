@@ -273,3 +273,23 @@ async function updateOrderStatus(orderId, status) {
         console.error('Error updating order status:', error);
     }
 }
+
+function logout() {
+    // Clear authentication tokens or session data as needed
+    fetch('/api/admin/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/login.html'; // Redirect to the login page
+        } else {
+            console.error('Logout failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
