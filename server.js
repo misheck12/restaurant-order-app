@@ -65,9 +65,16 @@ app.post('/api/admin/login', (req, res) => {
 
 // Admin logout endpoint
 app.post('/api/admin/logout', (req, res) => {
-    req.session.destroy();
-    res.json({ success: true, message: 'Logout successful' });
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ message: 'Logout failed' });
+        }
+        res.json({ success: true });
+    });
 });
+
+// Protect admin routes
+app.use('/api/admin', authenticate);
 
 // Menu endpoints
 app.get('/api/menu', (req, res) => {
