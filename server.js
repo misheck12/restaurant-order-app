@@ -19,6 +19,11 @@ try {
     process.exit(1); // Exit if initial data can't be loaded
 }
 
+// Admin credentials
+const adminUsername = 'admin';
+const adminPasswordHash = bcrypt.hashSync('password123', 10); // Hash the admin password
+
+
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
