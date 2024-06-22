@@ -244,7 +244,7 @@ function displayOrders(orders, elementId) {
     orderList.innerHTML = orders.map(order => `
         <tr>
             <td>${order.orderNumber}</td>
-            <td>${order.customerName}</td>
+            <td>${order.name}</td>
             <td>${order.total.toFixed(2)}</td>
             <td>
                 <button onclick="updateOrderStatus('${order.id}', 'preparing')">Prepare</button>
