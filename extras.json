@@ -10,5 +10,11 @@
     "name": "beans",
     "price": 5,
     "category": "breakfast"
+  },
+  {
+    "id": "1719035206772",
+    "name": "chibwabwa",
+    "price": 12,
+    "category": "breakfast"
   }
 ]
