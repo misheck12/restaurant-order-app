@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
 
 const app = express();
 const port = 3000;
@@ -24,11 +25,16 @@ try {
 const adminUsername = 'admin';
 const adminPasswordHash = bcrypt.hashSync('password123', 10); // Hash the admin password
 
-
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
+app.use(session({
+    secret: 'your_secret_key', // Replace with a secure secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Use true if you serve over HTTPS
+}));
 
 // Utility functions to save data to JSON files
 function saveMenu() {
@@ -44,7 +50,7 @@ function saveOrders() {
 }
 
 // Authentication middleware
-function isAuthenticated(req, res, next) {
+function authenticate(req, res, next) {
     if (req.session.user && req.session.user === adminUsername) {
         return next();
     } else {
