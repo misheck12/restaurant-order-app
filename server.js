@@ -42,6 +42,33 @@ function saveOrders() {
     fs.writeFileSync('orders.json', JSON.stringify(orders, null, 2));
 }
 
+// Authentication middleware
+function isAuthenticated(req, res, next) {
+    if (req.session.user && req.session.user === adminUsername) {
+        return next();
+    } else {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+}
+
+// Admin login endpoint
+app.post('/api/admin/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (username === adminUsername && bcrypt.compareSync(password, adminPasswordHash)) {
+        req.session.user = adminUsername;
+        res.json({ success: true, message: 'Login successful' });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+});
+
+// Admin logout endpoint
+app.post('/api/admin/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ success: true, message: 'Logout successful' });
+});
+
 // Menu endpoints
 app.get('/api/menu', (req, res) => {
     res.json(menu);
