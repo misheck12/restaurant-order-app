@@ -57,6 +57,12 @@ function displayMenu(menu) {
 async function addItem() {
     const itemName = document.getElementById('itemName').value;
     const itemPrice = parseFloat(document.getElementById('itemPrice').value);
+
+    if (!itemName || isNaN(itemPrice)) {
+        alert('Please enter valid item name and price.');
+        return;
+    }
+
     const newItem = {
         id: Date.now().toString(),
         name: itemName,
@@ -85,33 +91,39 @@ async function addItem() {
 async function editItem(itemId) {
     const itemName = prompt("Enter new item name:");
     const itemPrice = prompt("Enter new item price (K):");
-    if (itemName !== null && itemPrice !== null) {
-        const updatedItem = {
-            id: itemId,
-            name: itemName,
-            price: parseFloat(itemPrice)
-        };
 
-        try {
-            const response = await fetch(`/api/menu/${itemId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedItem)
-            });
+    if (itemName === null || itemPrice === null || isNaN(parseFloat(itemPrice))) {
+        alert('Invalid input. Please try again.');
+        return;
+    }
 
-            const result = await response.json();
-            if (result.success) {
-                await fetchAndDisplayMenu();
-            }
-        } catch (error) {
-            console.error('Error updating item:', error);
+    const updatedItem = {
+        id: itemId,
+        name: itemName,
+        price: parseFloat(itemPrice)
+    };
+
+    try {
+        const response = await fetch(`/api/menu/${itemId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedItem)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            await fetchAndDisplayMenu();
         }
+    } catch (error) {
+        console.error('Error updating item:', error);
     }
 }
 
 async function deleteItem(itemId) {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
     try {
         const response = await fetch(`/api/menu/${itemId}`, {
             method: 'DELETE'
@@ -149,6 +161,12 @@ async function addExtra() {
     const extraName = document.getElementById('extraName').value;
     const extraPrice = parseFloat(document.getElementById('extraPrice').value);
     const extraCategory = document.getElementById('extraCategory').value;
+
+    if (!extraName || isNaN(extraPrice) || !extraCategory) {
+        alert('Please enter valid extra name, price, and category.');
+        return;
+    }
+
     const newExtra = {
         id: Date.now().toString(),
         name: extraName,
@@ -179,34 +197,40 @@ async function editExtra(extraId) {
     const extraName = prompt("Enter new extra name:");
     const extraPrice = prompt("Enter new extra price (K):");
     const extraCategory = prompt("Enter new extra category:");
-    if (extraName !== null && extraPrice !== null && extraCategory !== null) {
-        const updatedExtra = {
-            id: extraId,
-            name: extraName,
-            price: parseFloat(extraPrice),
-            category: extraCategory
-        };
 
-        try {
-            const response = await fetch(`/api/extras/${extraId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedExtra)
-            });
+    if (extraName === null || extraPrice === null || isNaN(parseFloat(extraPrice)) || extraCategory === null) {
+        alert('Invalid input. Please try again.');
+        return;
+    }
 
-            const result = await response.json();
-            if (result.success) {
-                await fetchAndDisplayExtras();
-            }
-        } catch (error) {
-            console.error('Error updating extra:', error);
+    const updatedExtra = {
+        id: extraId,
+        name: extraName,
+        price: parseFloat(extraPrice),
+        category: extraCategory
+    };
+
+    try {
+        const response = await fetch(`/api/extras/${extraId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedExtra)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            await fetchAndDisplayExtras();
         }
+    } catch (error) {
+        console.error('Error updating extra:', error);
     }
 }
 
 async function deleteExtra(extraId) {
+    if (!confirm('Are you sure you want to delete this extra?')) return;
+
     try {
         const response = await fetch(`/api/extras/${extraId}`, {
             method: 'DELETE'
@@ -275,7 +299,6 @@ async function updateOrderStatus(orderId, status) {
 }
 
 function logout() {
-    // Clear authentication tokens or session data as needed
     fetch('/api/admin/logout', {
         method: 'POST',
         headers: {
