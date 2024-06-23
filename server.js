@@ -40,7 +40,6 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Utility functions to save data to JSON files
 function saveMenu() {
     fs.writeFileSync('menu.json', JSON.stringify(menu, null, 2));
 }
