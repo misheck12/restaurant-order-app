@@ -49,7 +49,7 @@
     "paymentMethod": "airtel",
     "name": "malware api",
     "phoneNumber": "0960231978",
-    "status": "ready",
+    "status": "completed",
     "orderNumber": "20240620023320",
     "timestamp": "2024-06-20T00:33:20.496Z"
   },
@@ -115,7 +115,7 @@
     "paymentMethod": "airtel",
     "name": "Lusaka",
     "phoneNumber": "+260763921419",
-    "status": "preparing",
+    "status": "completed",
     "orderNumber": "20240620132827",
     "timestamp": "2024-06-20T11:28:27.890Z"
   },
@@ -142,8 +142,30 @@
     "paymentMethod": "airtel",
     "name": "Misheck Livingi",
     "phoneNumber": "0960231978",
-    "status": "ready",
+    "status": "completed",
     "orderNumber": "20240623061115",
     "timestamp": "2024-06-23T04:11:15.413Z"
+  },
+  {
+    "items": [
+      {
+        "name": "breamt",
+        "quantity": 1,
+        "price": 40
+      },
+      {
+        "name": "mushroom",
+        "quantity": 1,
+        "price": 5
+      }
+    ],
+    "delivery": true,
+    "total": 52,
+    "paymentMethod": "airtel",
+    "name": "Misheck Livingi",
+    "phoneNumber": "0960231978",
+    "status": "pending",
+    "orderNumber": "20240623103511",
+    "timestamp": "2024-06-23T08:35:11.437Z"
   }
 ]
