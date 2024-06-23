@@ -28,7 +28,7 @@ const adminPasswordHash = bcrypt.hashSync('password123', 10); // Hash the admin 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static('public'));
+app.use(express.static('public')); 
 app.use(session({
     secret: 'your_secret_key', // Replace with a secure secret key
     resave: false,
