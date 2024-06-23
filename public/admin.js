@@ -220,6 +220,7 @@ async function addExtra() {
             body: JSON.stringify(newExtra)
         });
 
+        
         const result = await response.json();
         if (result.success) {
             await fetchAndDisplayExtras();
