@@ -118,5 +118,32 @@
     "status": "pending",
     "orderNumber": "20240620132827",
     "timestamp": "2024-06-20T11:28:27.890Z"
+  },
+  {
+    "items": [
+      {
+        "name": "hippo",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "breab",
+        "quantity": 1,
+        "price": 40
+      },
+      {
+        "name": "beans",
+        "quantity": 1,
+        "price": 5
+      }
+    ],
+    "delivery": true,
+    "total": 102,
+    "paymentMethod": "airtel",
+    "name": "Misheck Livingi",
+    "phoneNumber": "0960231978",
+    "status": "pending",
+    "orderNumber": "20240623061115",
+    "timestamp": "2024-06-23T04:11:15.413Z"
   }
 ]
