@@ -5,6 +5,8 @@ const path = require('path');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const serverless = require('serverless-http');
+
 
 const app = express();
 const port = 3000;
@@ -209,3 +211,5 @@ app.get('/checkout.html', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+
+module.exports.handler = serverless(app);
