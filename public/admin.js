@@ -35,6 +35,34 @@ async function fetchAndDisplayOrders() {
     }
 }
 
+async function updateOrderStatus(orderId, status) {
+    try {
+        const response = await fetch(`/api/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update order status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (result.success) {
+            await fetchAndDisplayOrders(); // Refresh the orders after successful update
+        } else {
+            console.error('Server responded with an error:', result.error);
+            // Consider displaying an error message to the user (e.g., using alert() or a more elegant UI element).
+        }
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        // Handle the error gracefully, e.g., by showing a user-friendly message.
+    }
+}
+
+
 async function fetchMenu() {
     const response = await fetch('/api/menu');
     if (!response.ok) throw new Error('Failed to fetch menu');
