@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // Use the PORT environment variable
 
 // Load initial data from JSON files
 let menu, extras, orders;
@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
 app.use(session({
-    secret: 'your_secret_key', // Replace with a secure secret key
+    secret: process.env.SESSION_SECRET || 'your_secret_key', // Use environment variable for secret key
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Use true if you serve over HTTPS
@@ -200,12 +200,15 @@ app.get('/api/orders/status/:orderNumber', (req, res) => {
     res.json({ success: true, status: order.status });
 });
 
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Serve checkout page
 app.get('/checkout.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'checkout.html'));
 });
 
-// Start server
+// Start the server
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
