@@ -93,7 +93,7 @@
     "paymentMethod": "mtn",
     "name": "Misheck Livingi",
     "phoneNumber": "+260763921419",
-    "status": "ready",
+    "status": "completed",
     "orderNumber": "20240620124319",
     "timestamp": "2024-06-20T10:43:19.432Z"
   },
@@ -142,7 +142,7 @@
     "paymentMethod": "airtel",
     "name": "Misheck Livingi",
     "phoneNumber": "0960231978",
-    "status": "pending",
+    "status": "preparing",
     "orderNumber": "20240623061115",
     "timestamp": "2024-06-23T04:11:15.413Z"
   }
