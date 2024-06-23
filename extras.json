@@ -22,5 +22,11 @@
     "name": "beans",
     "price": 20,
     "category": "breakfast"
+  },
+  {
+    "id": "1719118122657",
+    "name": "mushroom",
+    "price": 5,
+    "category": "breakfast"
   }
 ]
