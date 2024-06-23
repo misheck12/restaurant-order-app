@@ -1,13 +1,19 @@
 [
   {
-    "id": "1718879221550",
-    "name": "impwa",
+    "id": "1719035206772",
+    "name": "chibwabwa",
+    "price": 12,
+    "category": "breakfast"
+  },
+  {
+    "id": "1719115693407",
+    "name": "beans",
     "price": 20,
     "category": "breakfast"
   },
   {
-    "id": "1718881750252",
-    "name": "beans",
+    "id": "1719118122657",
+    "name": "mushroom",
     "price": 5,
     "category": "breakfast"
   }

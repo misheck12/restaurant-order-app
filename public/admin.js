@@ -6,7 +6,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Error loading initial data:', error);
     }
+
+    document.body.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('btn-primary')) {
+            const orderId = event.target.closest('tr').querySelector('td:first-child').textContent;
+            const newStatus = event.target.textContent.toLowerCase();
+            await updateOrderStatus(orderId, newStatus);
+        }
+    });
 });
+
 
 async function fetchAndDisplayMenu() {
     try {
@@ -35,6 +44,34 @@ async function fetchAndDisplayOrders() {
     }
 }
 
+async function updateOrderStatus(orderId, status) {
+    try {
+        const response = await fetch(`/api/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update order status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (result.success) {
+            await fetchAndDisplayOrders(); // Refresh the orders after successful update
+        } else {
+            console.error('Server responded with an error:', result.error);
+            // Consider displaying an error message to the user (e.g., using alert() or a more elegant UI element).
+        }
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        // Handle the error gracefully, e.g., by showing a user-friendly message.
+    }
+}
+
+
 async function fetchMenu() {
     const response = await fetch('/api/menu');
     if (!response.ok) throw new Error('Failed to fetch menu');
@@ -42,7 +79,7 @@ async function fetchMenu() {
 }
 
 function displayMenu(menu) {
-    const menuList = document.getElementById('menuSection');
+    const menuList = document.getElementById('menuList');
     menuList.innerHTML = menu.map(item => `
         <div class="menu-item">
             <span>${item.name} (K${item.price.toFixed(2)})</span>
@@ -57,6 +94,12 @@ function displayMenu(menu) {
 async function addItem() {
     const itemName = document.getElementById('itemName').value;
     const itemPrice = parseFloat(document.getElementById('itemPrice').value);
+
+    if (!itemName || isNaN(itemPrice)) {
+        alert('Please enter valid item name and price.');
+        return;
+    }
+
     const newItem = {
         id: Date.now().toString(),
         name: itemName,
@@ -85,33 +128,39 @@ async function addItem() {
 async function editItem(itemId) {
     const itemName = prompt("Enter new item name:");
     const itemPrice = prompt("Enter new item price (K):");
-    if (itemName !== null && itemPrice !== null) {
-        const updatedItem = {
-            id: itemId,
-            name: itemName,
-            price: parseFloat(itemPrice)
-        };
 
-        try {
-            const response = await fetch(`/api/menu/${itemId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedItem)
-            });
+    if (itemName === null || itemPrice === null || isNaN(parseFloat(itemPrice))) {
+        alert('Invalid input. Please try again.');
+        return;
+    }
 
-            const result = await response.json();
-            if (result.success) {
-                await fetchAndDisplayMenu();
-            }
-        } catch (error) {
-            console.error('Error editing item:', error);
+    const updatedItem = {
+        id: itemId,
+        name: itemName,
+        price: parseFloat(itemPrice)
+    };
+
+    try {
+        const response = await fetch(`/api/menu/${itemId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedItem)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            await fetchAndDisplayMenu();
         }
+    } catch (error) {
+        console.error('Error updating item:', error);
     }
 }
 
 async function deleteItem(itemId) {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
     try {
         const response = await fetch(`/api/menu/${itemId}`, {
             method: 'DELETE'
@@ -136,7 +185,7 @@ function displayExtras(extras) {
     const extrasList = document.getElementById('extrasList');
     extrasList.innerHTML = extras.map(extra => `
         <div class="extra-item">
-            <span>${extra.name} (K${extra.price.toFixed(2)}) - ${extra.category}</span>
+            <span>${extra.name} (K${extra.price.toFixed(2)})</span>
             <div>
                 <button onclick="editExtra('${extra.id}')">Edit</button>
                 <button onclick="deleteExtra('${extra.id}')">Delete</button>
@@ -149,6 +198,12 @@ async function addExtra() {
     const extraName = document.getElementById('extraName').value;
     const extraPrice = parseFloat(document.getElementById('extraPrice').value);
     const extraCategory = document.getElementById('extraCategory').value;
+
+    if (!extraName || isNaN(extraPrice) || !extraCategory) {
+        alert('Please enter valid extra name, price, and category.');
+        return;
+    }
+
     const newExtra = {
         id: Date.now().toString(),
         name: extraName,
@@ -167,8 +222,7 @@ async function addExtra() {
 
         const result = await response.json();
         if (result.success) {
-            await fetchAndDisplayExtras
-            ();
+            await fetchAndDisplayExtras();
             document.getElementById('extrasForm').reset();
         }
     } catch (error) {
@@ -179,35 +233,41 @@ async function addExtra() {
 async function editExtra(extraId) {
     const extraName = prompt("Enter new extra name:");
     const extraPrice = prompt("Enter new extra price (K):");
-    const extraCategory = prompt("Enter new category (breakfast/lunch):");
-    if (extraName !== null && extraPrice !== null && extraCategory !== null) {
-        const updatedExtra = {
-            id: extraId,
-            name: extraName,
-            price: parseFloat(extraPrice),
-            category: extraCategory
-        };
+    const extraCategory = prompt("Enter new extra category:");
 
-        try {
-            const response = await fetch(`/api/extras/${extraId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedExtra)
-            });
+    if (extraName === null || extraPrice === null || isNaN(parseFloat(extraPrice)) || extraCategory === null) {
+        alert('Invalid input. Please try again.');
+        return;
+    }
 
-            const result = await response.json();
-            if (result.success) {
-                await fetchAndDisplayExtras();
-            }
-        } catch (error) {
-            console.error('Error editing extra:', error);
+    const updatedExtra = {
+        id: extraId,
+        name: extraName,
+        price: parseFloat(extraPrice),
+        category: extraCategory
+    };
+
+    try {
+        const response = await fetch(`/api/extras/${extraId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedExtra)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            await fetchAndDisplayExtras();
         }
+    } catch (error) {
+        console.error('Error updating extra:', error);
     }
 }
 
 async function deleteExtra(extraId) {
+    if (!confirm('Are you sure you want to delete this extra?')) return;
+
     try {
         const response = await fetch(`/api/extras/${extraId}`, {
             method: 'DELETE'
@@ -222,6 +282,23 @@ async function deleteExtra(extraId) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await fetchAndDisplayOrders();
+    } catch (error) {
+        console.error('Error loading initial data:', error);
+    }
+});
+
+async function fetchAndDisplayOrders() {
+    try {
+        const orders = await fetchOrders();
+        categorizeOrders(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+    }
+}
+
 async function fetchOrders() {
     const response = await fetch('/api/orders');
     if (!response.ok) throw new Error('Failed to fetch orders');
@@ -229,83 +306,39 @@ async function fetchOrders() {
 }
 
 function categorizeOrders(orders) {
-    const pendingOrders = [];
-    const preparingOrders = [];
-    const readyOrders = [];
-    const completedOrders = [];
+    const pendingOrders = orders.filter(order => order.status === 'pending');
+    const preparingOrders = orders.filter(order => order.status === 'preparing');
+    const readyOrders = orders.filter(order => order.status === 'ready');
+    const completedOrders = orders.filter(order => order.status === 'completed');
 
-    orders.forEach(order => {
-        switch (order.status) {
-            case 'pending':
-                pendingOrders.push(order);
-                break;
-            case 'preparing':
-                preparingOrders.push(order);
-                break;
-            case 'ready':
-                readyOrders.push(order);
-                break;
-            case 'completed':
-                completedOrders.push(order);
-                break;
-            default:
-                console.warn(`Unknown status for order ${order.orderNumber}: ${order.status}`);
-                break;
-        }
-    });
-
-    displayOrders({
-        pendingOrders,
-        preparingOrders,
-        readyOrders,
-        completedOrders
-    });
+    displayOrders(pendingOrders, 'pendingOrderList', 'preparing');
+    displayOrders(preparingOrders, 'preparingOrderList', 'ready');
+    displayOrders(readyOrders, 'readyOrderList', 'completed');
+    displayOrders(completedOrders, 'completedOrderList', null);
 }
 
-function displayOrders(orderCategories) {
-    displayOrderCategory('pendingOrders', orderCategories.pendingOrders);
-    displayOrderCategory('preparingOrders', orderCategories.preparingOrders);
-    displayOrderCategory('readyOrders', orderCategories.readyOrders);
-    displayOrderCategory('completedOrders', orderCategories.completedOrders);
-}
-
-function displayOrderCategory(categoryId, orders) {
-    const orderList = document.getElementById(categoryId);
-    if (!orders || !Array.isArray(orders)) {
-        orderList.innerHTML = '<p>No orders available.</p>';
-        return;
-    }
+function displayOrders(orders, elementId, nextStatus) {
+    const orderList = document.getElementById(elementId);
     orderList.innerHTML = orders.map(order => `
-        <div class="order-item">
-            <div class="order-info">
-                <span>Order #${order.orderNumber}</span><br>
-                <span>Payment Method: ${order.paymentMethod || 'N/A'}</span><br>
-                <span>Name: ${order.name}</span><br>
-                <span>Mobile Number: ${order.phoneNumber || 'N/A'}</span><br>
-                <span>Delivery: ${order.delivery ? 'Yes' : 'No'}</span><br>
-                <span>Total: K${order.total.toFixed(2)}</span><br>
-                <span>Status: ${order.status}</span>
-            </div>
-            <div class="order-items">
-                <h3>Ordered Items:</h3>
-                <ul>
-                    ${order.items ? order.items.map(item => `
-                        <li>${item.name} (Quantity: ${item.quantity}) - K${(item.quantity * item.price).toFixed(2)}</li>
-                    `).join('') : '<li>No items found</li>'}
-                </ul>
-            </div>
-            <div class="order-actions">
-                <button onclick="deleteOrder('${order.orderNumber}')">Delete</button>
-                <button onclick="updateOrderStatus('${order.orderNumber}')">Update Status</button>
-            </div>
-        </div>
+        <tr>
+            <td>${order.orderNumber}</td>
+            <td>${order.name}</td>
+            <td>${order.total.toFixed(2)}</td>
+            <td>
+                ${nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.id}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : ''}
+            </td>
+        </tr>
     `).join('');
 }
 
-async function deleteOrder(orderNumber) {
+async function updateOrderStatus(orderId, status) {
     try {
-        const response = await fetch(`/api/orders/${orderNumber}`, {
-            method: 'DELETE'
+        const response = await fetch(`/api/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
         });
 
         const result = await response.json();
@@ -313,28 +346,29 @@ async function deleteOrder(orderNumber) {
             await fetchAndDisplayOrders();
         }
     } catch (error) {
-        console.error('Error deleting order:', error);
+        console.error('Error updating order status:', error);
     }
 }
 
-async function updateOrderStatus(orderNumber) {
-    const newStatus = prompt("Enter new status (e.g., pending, preparing, ready, completed):");
-    if (newStatus) {
-        try {
-            const response = await fetch(`/api/orders/${orderNumber}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: newStatus })
-            });
+function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
 
-            const result = await response.json();
-            if (result.success) {
-                await fetchAndDisplayOrders();
-            }
-        } catch (error) {
-            console.error('Error updating order status:', error);
+function logout() {
+    fetch('/api/admin/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         }
-    }
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/login.html'; // Redirect to the login page
+        } else {
+            console.error('Logout failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }

@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
 
 const app = express();
 const port = 3000;
@@ -19,10 +21,20 @@ try {
     process.exit(1); // Exit if initial data can't be loaded
 }
 
+// Admin credentials
+const adminUsername = 'admin';
+const adminPasswordHash = bcrypt.hashSync('password123', 10); // Hash the admin password
+
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
+app.use(session({
+    secret: 'your_secret_key', // Replace with a secure secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Use true if you serve over HTTPS
+}));
 
 // Utility functions to save data to JSON files
 function saveMenu() {
@@ -36,6 +48,40 @@ function saveExtras() {
 function saveOrders() {
     fs.writeFileSync('orders.json', JSON.stringify(orders, null, 2));
 }
+
+// Authentication middleware
+function authenticate(req, res, next) {
+    if (req.session.user && req.session.user === adminUsername) {
+        return next();
+    } else {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+}
+
+// Admin login endpoint
+app.post('/api/admin/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (username === adminUsername && bcrypt.compareSync(password, adminPasswordHash)) {
+        req.session.user = adminUsername;
+        res.json({ success: true, message: 'Login successful' });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+});
+
+// Admin logout endpoint
+app.post('/api/admin/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ message: 'Logout failed' });
+        }
+        res.json({ success: true });
+    });
+});
+
+// Protect admin routes
+app.use('/api/admin', authenticate);
 
 // Menu endpoints
 app.get('/api/menu', (req, res) => {

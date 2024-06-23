@@ -9,19 +9,19 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     line-height: 1.6;
-    display: flex;
+    display: flex; /* Center the container horizontally and vertically */
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh; /* Ensure the body covers the full viewport height */
 }
 
 .admin-container {
-    width: 90%;
-    max-width: 1200px;
+    width: 90%; /* Take up 90% of the parent container's width */
+    max-width: 1200px; /* Limit the maximum width to prevent content stretching too wide */
     background-color: #fff;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    padding: 20px;
 }
 
 header {
@@ -29,29 +29,28 @@ header {
     margin-bottom: 20px;
 }
 
-header h1 {
+/* Typography */
+h1, h2, h3 {
     color: #333;
 }
 
+/* Sections (Menu, Extras, Orders) */
 main {
     display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px; /* Space between grid items */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
 }
 
-.menu-section, .extras-section, .orders-section {
+.menu-section,
+.extras-section,
+.orders-section {
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.menu-section h2, .extras-section h2, .orders-section h2 {
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-    color: #333;
-}
-
+/* Forms */
 .form-group {
     margin-bottom: 15px;
 }
@@ -63,7 +62,9 @@ label {
     color: #555;
 }
 
-input[type="text"], input[type="number"], select {
+input[type="text"],
+input[type="number"],
+select {
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
@@ -71,10 +72,11 @@ input[type="text"], input[type="number"], select {
     font-size: 1rem;
 }
 
+/* Buttons */
 button {
     padding: 8px 16px;
     border: none;
-    background-color: #007bff;
+    background-color: #007bff; /* Bootstrap blue */
     color: #fff;
     cursor: pointer;
     border-radius: 4px;
@@ -82,54 +84,34 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Darker blue on hover */
 }
 
-.item-list {
-    margin-top: 15px;
-}
-
-.order-category {
-    margin-bottom: 20px;
-}
-
-.order-category h3 {
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-    color: #333;
-}
-
+/* Order Tables */
 .order-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
 }
 
-.order-table th, .order-table td {
+.order-table th,
+.order-table td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
 }
 
-.order-table th {
-    background-color: #f0f0f0;
-    color: #333;
+/* Order Category Styling */
+.order-category {
+    margin-bottom: 20px;
 }
 
-.order-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.order-table tbody tr:hover {
-    background-color: #f0f0f0;
-}
-
-.order-table td.actions button {
-    margin-right: 5px;
-}
-
+/* Responsive Adjustments */
 @media (max-width: 768px) {
     main {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Single column layout on smaller screens */
+    }
+
+    .admin-container {
+        width: 100%; /* Take full width on smaller screens */
     }
 }

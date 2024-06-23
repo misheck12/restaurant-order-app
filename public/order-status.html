@@ -5,25 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Status</title>
     <link rel="stylesheet" href="./stylesheet/order-status.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="nav-bar">
-        <ul>
-            <li><a href="./index.html">Make your order</a></li>
+    <nav class="nav-bar">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="./index.html">Make your order</a>
+            </li>
         </ul>
-    </div>
-    <div class="status-container">
-        <h1>Order Status</h1>
-        <table id="orderTable">
-            <thead>
-                <tr>
-                    <th>Order Number</th>
-                    <th>Customer Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="orderStatus"></tbody>
-        </table>
+    </nav>
+    <div class="container status-container">
+        <h1 class="text-center">Order Status</h1>
+        <div class="table-responsive">
+            <table class="table table-striped" id="orderTable">
+                <thead>
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Customer Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="orderStatus"></tbody>
+            </table>
+        </div>
     </div>
 
     <script>
