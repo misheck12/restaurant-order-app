@@ -38,6 +38,8 @@ app.use(session({
     cookie: { secure: false } // Use true if you serve over HTTPS
 }));
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Utility functions to save data to JSON files
 function saveMenu() {
     fs.writeFileSync('menu.json', JSON.stringify(menu, null, 2));
