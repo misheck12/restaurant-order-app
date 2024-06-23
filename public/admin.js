@@ -245,6 +245,23 @@ async function deleteExtra(extraId) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await fetchAndDisplayOrders();
+    } catch (error) {
+        console.error('Error loading initial data:', error);
+    }
+});
+
+async function fetchAndDisplayOrders() {
+    try {
+        const orders = await fetchOrders();
+        categorizeOrders(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+    }
+}
+
 async function fetchOrders() {
     const response = await fetch('/api/orders');
     if (!response.ok) throw new Error('Failed to fetch orders');
@@ -257,13 +274,13 @@ function categorizeOrders(orders) {
     const readyOrders = orders.filter(order => order.status === 'ready');
     const completedOrders = orders.filter(order => order.status === 'completed');
 
-    displayOrders(pendingOrders, 'pendingOrderList');
-    displayOrders(preparingOrders, 'preparingOrderList');
-    displayOrders(readyOrders, 'readyOrderList');
-    displayOrders(completedOrders, 'completedOrderList');
+    displayOrders(pendingOrders, 'pendingOrderList', 'preparing');
+    displayOrders(preparingOrders, 'preparingOrderList', 'ready');
+    displayOrders(readyOrders, 'readyOrderList', 'completed');
+    displayOrders(completedOrders, 'completedOrderList', null);
 }
 
-function displayOrders(orders, elementId) {
+function displayOrders(orders, elementId, nextStatus) {
     const orderList = document.getElementById(elementId);
     orderList.innerHTML = orders.map(order => `
         <tr>
@@ -271,9 +288,7 @@ function displayOrders(orders, elementId) {
             <td>${order.name}</td>
             <td>${order.total.toFixed(2)}</td>
             <td>
-                <button onclick="updateOrderStatus('${order.id}', 'preparing')">Prepare</button>
-                <button onclick="updateOrderStatus('${order.id}', 'ready')">Ready</button>
-                <button onclick="updateOrderStatus('${order.id}', 'completed')">Complete</button>
+                ${nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.id}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : ''}
             </td>
         </tr>
     `).join('');
@@ -296,6 +311,10 @@ async function updateOrderStatus(orderId, status) {
     } catch (error) {
         console.error('Error updating order status:', error);
     }
+}
+
+function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
 function logout() {
