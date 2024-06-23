@@ -122,6 +122,8 @@ async function editItem(itemId) {
 }
 
 async function deleteItem(itemId) {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
     try {
         const response = await fetch(`/api/menu/${itemId}`, {
             method: 'DELETE'
@@ -146,7 +148,7 @@ function displayExtras(extras) {
     const extrasList = document.getElementById('extrasList');
     extrasList.innerHTML = extras.map(extra => `
         <div class="extra-item">
-            <span>${extra.name} (K${extra.price.toFixed(2)}) - ${extra.category}</span>
+            <span>${extra.name} (K${extra.price.toFixed(2)})</span>
             <div>
                 <button onclick="editExtra('${extra.id}')">Edit</button>
                 <button onclick="deleteExtra('${extra.id}')">Delete</button>
@@ -227,6 +229,8 @@ async function editExtra(extraId) {
 }
 
 async function deleteExtra(extraId) {
+    if (!confirm('Are you sure you want to delete this extra?')) return;
+
     try {
         const response = await fetch(`/api/extras/${extraId}`, {
             method: 'DELETE'
@@ -241,6 +245,23 @@ async function deleteExtra(extraId) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await fetchAndDisplayOrders();
+    } catch (error) {
+        console.error('Error loading initial data:', error);
+    }
+});
+
+async function fetchAndDisplayOrders() {
+    try {
+        const orders = await fetchOrders();
+        categorizeOrders(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+    }
+}
+
 async function fetchOrders() {
     const response = await fetch('/api/orders');
     if (!response.ok) throw new Error('Failed to fetch orders');
@@ -248,54 +269,39 @@ async function fetchOrders() {
 }
 
 function categorizeOrders(orders) {
-    const pendingOrderList = document.getElementById('pendingOrderList');
-    const preparingOrderList = document.getElementById('preparingOrderList');
-    const readyOrderList = document.getElementById('readyOrderList');
-    const completedOrderList = document.getElementById('completedOrderList');
+    const pendingOrders = orders.filter(order => order.status === 'pending');
+    const preparingOrders = orders.filter(order => order.status === 'preparing');
+    const readyOrders = orders.filter(order => order.status === 'ready');
+    const completedOrders = orders.filter(order => order.status === 'completed');
 
-    pendingOrderList.innerHTML = '';
-    preparingOrderList.innerHTML = '';
-    readyOrderList.innerHTML = '';
-    completedOrderList.innerHTML = '';
-
-    orders.forEach(order => {
-        const orderRow = `
-            <tr>
-                <td>${order.orderNumber}</td>
-                <td>${order.customerName}</td>
-                <td>K${order.total.toFixed(2)}</td>
-                <td>
-                    ${order.status === 'pending' ? `<button onclick="updateOrderStatus('${order.id}', 'preparing')">Start Preparing</button>` : ''}
-                    ${order.status === 'preparing' ? `<button onclick="updateOrderStatus('${order.id}', 'ready')">Ready</button>` : ''}
-                    ${order.status === 'ready' ? `<button onclick="updateOrderStatus('${order.id}', 'completed')">Complete</button>` : ''}
-                </td>
-            </tr>
-        `;
-        switch (order.status) {
-            case 'pending':
-                pendingOrderList.innerHTML += orderRow;
-                break;
-            case 'preparing':
-                preparingOrderList.innerHTML += orderRow;
-                break;
-            case 'ready':
-                readyOrderList.innerHTML += orderRow;
-                break;
-            case 'completed':
-                completedOrderList.innerHTML += orderRow;
-                break;
-        }
-    });
+    displayOrders(pendingOrders, 'pendingOrderList', 'preparing');
+    displayOrders(preparingOrders, 'preparingOrderList', 'ready');
+    displayOrders(readyOrders, 'readyOrderList', 'completed');
+    displayOrders(completedOrders, 'completedOrderList', null);
 }
 
-async function updateOrderStatus(orderId, newStatus) {
+function displayOrders(orders, elementId, nextStatus) {
+    const orderList = document.getElementById(elementId);
+    orderList.innerHTML = orders.map(order => `
+        <tr>
+            <td>${order.orderNumber}</td>
+            <td>${order.name}</td>
+            <td>${order.total.toFixed(2)}</td>
+            <td>
+                ${nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.id}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : ''}
+            </td>
+        </tr>
+    `).join('');
+}
+
+async function updateOrderStatus(orderId, status) {
     try {
-        const response = await fetch(`/api/orders/${orderId}`, {
+        const response = await fetch(`/api/orders/${orderId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: newStatus })
+            body: JSON.stringify({ status })
         });
 
         const result = await response.json();
@@ -305,6 +311,10 @@ async function updateOrderStatus(orderId, newStatus) {
     } catch (error) {
         console.error('Error updating order status:', error);
     }
+}
+
+function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
 function logout() {
