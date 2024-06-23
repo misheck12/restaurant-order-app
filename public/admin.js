@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-
 async function fetchAndDisplayMenu() {
     try {
         const menu = await fetchMenu();
