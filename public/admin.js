@@ -5,8 +5,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         await fetchAndDisplayOrders();
     } catch (error) {
         console.error('Error loading initial data:', error);
+        // Consider displaying an error message to the user here.
     }
+
+    // Event delegation for dynamically created buttons
+    document.body.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('btn-primary')) {
+            const orderId = event.target.closest('tr').querySelector('td:first-child').textContent;
+            const newStatus = event.target.textContent.toLowerCase();
+            await updateOrderStatus(orderId, newStatus);
+        }
+    });
 });
+
 
 async function fetchAndDisplayMenu() {
     try {
