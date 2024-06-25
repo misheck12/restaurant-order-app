@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "items": [
+      {
+        "name": "beans",
+        "quantity": 1,
+        "price": 6
+      },
+      {
+        "name": "visashi",
+        "quantity": 1,
+        "price": 6
+      }
+    ],
+    "delivery": true,
+    "total": 19,
+    "paymentMethod": "airtel",
+    "name": "",
+    "phoneNumber": "",
+    "status": "pending",
+    "orderNumber": "20240625132803",
+    "timestamp": "2024-06-25T11:28:03.568Z"
+  }
+]
