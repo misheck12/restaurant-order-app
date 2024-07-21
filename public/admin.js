@@ -358,6 +358,31 @@ async function updateOrderStatus(orderId, status) {
     }
 }
 
+async function deleteOrder(orderNumber) {
+    const confirmation = confirm('Are you sure you want to delete this order?');
+    if (!confirmation) return;
+
+    try {
+        const response = await fetch(`/api/orders/${orderNumber}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert('Order deleted successfully.');
+            // Refresh the list of orders
+            await fetchAndDisplayOrders();
+        } else {
+            throw new Error('Failed to delete the order.');
+        }
+    } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('Error deleting order. Please try again.');
+    }
+}
+
 function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1);
 }
