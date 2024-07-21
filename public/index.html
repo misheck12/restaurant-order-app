@@ -4,40 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="30">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./stylesheet/index.css">
     <title>Restaurant Order Form</title>
+    <style>
+        /* Additional custom styles */
+        body {
+            padding-top: 56px;
+        }
+        .nav-bar {
+            background-color: #343a40;
+        }
+        .nav-bar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-bar li {
+            display: inline;
+        }
+        .nav-bar a {
+            color: white;
+            padding: 10px 15px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .nav-bar a:hover {
+            background-color: #495057;
+        }
+        .title {
+            margin: 20px 0;
+        }
+        .order-form {
+            margin-top: 20px;
+        }
+        .menu-section, .delivery-section {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-        <nav class="nav-bar">
-            <ul>
-                <li><a href="./order-status.html">Check Your Order</a></li>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Roster's Kitchen</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="./order-status.html">Check Your Order</a>
+                </li>
             </ul>
-        </nav>
-        <h1 class="title">Roster's Kitchen Order Form</h1>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="title text-center">Roster's Kitchen Order Form</h1>
         
-    <form id="orderForm" class="order-form">
-        <div class="menu-section">
-            <h2>Menu</h2>
-            <div id="menuContainer" class="menu-container"></div>
-            
-            <h2>Extras</h2>
-            <div id="extrasContainer" class="menu-container"></div>
-        </div>
-
-        <div class="delivery-section">
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="delivery" name="delivery">
-                    Delivery (K5 - Gru campus)
-                </label>
+        <form id="orderForm" class="order-form">
+            <div class="menu-section">
+                <h2>Menu</h2>
+                <div id="menuContainer" class="menu-container"></div>
+                
+                <h2>Extras</h2>
+                <div id="extrasContainer" class="menu-container"></div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <button type="button" onclick="proceedToCheckout()" class="submit-button">Proceed to Checkout</button>
-        </div>
-    </form>
+            <div class="delivery-section form-group form-check">
+                <input type="checkbox" class="form-check-input" id="delivery" name="delivery">
+                <label class="form-check-label" for="delivery">Delivery (K5 - Gru campus)</label>
+            </div>
+
+            <div class="form-group">
+                <button type="button" onclick="proceedToCheckout()" class="btn btn-primary">Proceed to Checkout</button>
+            </div>
+        </form>
+    </div>
 
     <script src="./index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

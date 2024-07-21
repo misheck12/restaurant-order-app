@@ -318,16 +318,25 @@ function categorizeOrders(orders) {
 
 function displayOrders(orders, elementId, nextStatus) {
     const orderList = document.getElementById(elementId);
-    orderList.innerHTML = orders.map(order => `
-        <tr>
-            <td>${order.orderNumber}</td>
-            <td>${order.name}</td>
-            <td>${order.total.toFixed(2)}</td>
-            <td>
-                ${nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.id}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : ''}
-            </td>
-        </tr>
-    `).join('');
+    orderList.innerHTML = orders.map(order => {
+        // Create a string that lists each item in the order
+        const itemsDetail = order.items.map(item => `${item.quantity}x ${item.name} @ K${item.price.toFixed(2)}`).join('<br>');
+
+        return `
+            <tr>
+                <td>${order.orderNumber}</td>
+                <td>
+                    <strong>Customer:</strong> ${order.name}<br>
+                    <strong>Phone:</strong> ${order.phoneNumber}<br>
+                    <strong>Items:</strong><br>${itemsDetail}
+                </td>
+                <td>K${order.total.toFixed(2)}</td>
+                <td>
+                    ${nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.orderNumber}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : ''}
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 async function updateOrderStatus(orderId, status) {

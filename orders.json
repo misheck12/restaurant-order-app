@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "items": [
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "beansz",
+        "quantity": 1,
+        "price": 5
+      }
+    ],
+    "delivery": true,
+    "total": 62,
+    "paymentMethod": "airtel",
+    "name": "Misheck Livingi",
+    "phoneNumber": "0979435660",
+    "status": "completed",
+    "orderNumber": "20240721233802",
+    "timestamp": "2024-07-21T21:38:02.190Z"
+  }
+]
