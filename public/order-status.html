@@ -7,28 +7,81 @@
     <title>Order Status</title>
     <link rel="stylesheet" href="./stylesheet/order-status.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Additional custom styles */
+        body {
+            padding-top: 56px;
+        }
+        .navbar-nav .nav-link {
+            color: white;
+            padding: 10px 15px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .navbar-nav .nav-link:hover, .navbar-nav .highlight-link:hover {
+            background-color: #495057;
+        }
+        .highlight-link {
+            font-weight: bold;
+            font-size: 1.2rem;
+            background-color: #ffc107;
+            color: #343a40 !important;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px;
+        }
+        .status-container {
+            margin-top: 20px;
+        }
+        .highlight-link:hover {
+            background-color: #e0a800;
+        }
+        .table-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table thead th {
+            background-color: #343a40;
+            color: white;
+        }
+        .no-orders {
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-    <nav class="nav-bar">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="./index.html">Make your order</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Roster's Kitchen</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link highlight-link" href="./index.html">Make Your Order</a>
+                </li>
+            </ul>
+        </div>
     </nav>
+
     <div class="container status-container">
-        <h1 class="text-center">Order Status</h1>
-        <div class="table-responsive">
-            <table class="table table-striped" id="orderTable">
-                <thead>
-                    <tr>
-                        <th>Order Number</th>
-                        <th>Customer Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="orderStatus"></tbody>
-            </table>
+        <h1 class="text-center mb-4">Order Status</h1>
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="orderTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Order Number</th>
+                            <th>Customer Name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderStatus">
+                        <!-- Order status will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -38,20 +91,17 @@
                 const response = await fetch('/api/orders');
                 const orders = await response.json();
 
-                // Filter out completed orders
                 const pendingOrders = orders.filter(order => order.status !== 'completed');
 
                 if (pendingOrders.length === 0) {
-                    document.getElementById('orderStatus').innerHTML = '<tr><td colspan="3">No pending orders found</td></tr>';
+                    document.getElementById('orderStatus').innerHTML = '<tr><td colspan="3" class="no-orders">No pending orders found</td></tr>';
                 } else {
-                    // Fetch status for each pending order
                     const statusPromises = pendingOrders.map(async (order) => {
                         const statusResponse = await fetch(`/api/orders/status/${order.orderNumber}`);
                         const statusData = await statusResponse.json();
                         return { ...order, status: statusData.status };
                     });
 
-                    // Resolve all promises
                     const ordersWithStatus = await Promise.all(statusPromises);
 
                     const orderStatusTable = ordersWithStatus.map(order => `
@@ -65,13 +115,12 @@
                 }
             } catch (error) {
                 console.error('Error fetching order status:', error);
-                document.getElementById('orderStatus').innerHTML = '<tr><td colspan="3">Failed to fetch order status</td></tr>';
+                document.getElementById('orderStatus').innerHTML = '<tr><td colspan="3" class="no-orders">Failed to fetch order status</td></tr>';
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchOrderStatus();
-
             setInterval(fetchOrderStatus, 30000);
         });
     </script>
