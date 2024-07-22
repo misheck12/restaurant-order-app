@@ -59,8 +59,12 @@
                     <select id="paymentMethod" name="paymentMethod" class="form-control" required>
                         <option value="airtel">Airtel Money</option>
                         <option value="mtn">MTN Money</option>
-                        <option value="zamtel">Zam Kwacha</option>
+                        <option value="cash">Cash</option>
                     </select>
+                </div>
+                <div class="form-group" id="transactionIdGroup" style="display: none;">
+                    <label for="transactionId">Transaction ID:</label>
+                    <input type="text" id="transactionId" name="transactionId" class="form-control">
                 </div>
                 <div class="withdrawal-info">
                     <p>For mobile money withdrawals:</p>
@@ -90,6 +94,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             const order = JSON.parse(localStorage.getItem('order'));
             displayOrder(order);
+
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            paymentMethodSelect.addEventListener('change', handlePaymentMethodChange);
         });
 
         function displayOrder(order) {
@@ -106,7 +113,7 @@
             `).join('');
 
             const serviceFee = 2; // Example service fee
-            const deliveryFee = order.delivery ? (order.deliveryFee || 0) : 0; // Use provided delivery fee if available
+            const deliveryFee = order.deliveryFee || 0; // Use provided delivery fee if available
 
             let totalItemsCost = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
             const total = totalItemsCost + serviceFee + deliveryFee;
@@ -123,6 +130,19 @@
             document.getElementById('totalCost').innerText = `Total Cost: K${total.toFixed(2)}`;
         }
 
+        function handlePaymentMethodChange() {
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const transactionIdGroup = document.getElementById('transactionIdGroup');
+
+            if (paymentMethod === 'airtel' || paymentMethod === 'mtn') {
+                transactionIdGroup.style.display = 'block';
+                document.getElementById('transactionId').required = true;
+            } else {
+                transactionIdGroup.style.display = 'none';
+                document.getElementById('transactionId').required = false;
+            }
+        }
+
         async function submitOrder() {
             const order = JSON.parse(localStorage.getItem('order'));
             if (!order) {
@@ -131,9 +151,15 @@
             }
 
             order.paymentMethod = document.getElementById('paymentMethod').value;
+            order.transactionId = document.getElementById('transactionId').value;
             order.name = document.getElementById('name').value;
             order.phoneNumber = document.getElementById('phoneNumber').value;
             order.status = 'pending';
+
+            if ((order.paymentMethod === 'airtel' || order.paymentMethod === 'mtn') && !order.transactionId) {
+                alert('Please provide the transaction ID for the selected payment method.');
+                return;
+            }
 
             try {
                 const response = await fetch('/api/orders', {
