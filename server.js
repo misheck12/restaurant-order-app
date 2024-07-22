@@ -151,6 +151,11 @@ app.get('/api/orders', (req, res) => {
 app.post('/api/orders', (req, res) => {
     const newOrder = req.body;
 
+    // Validate transaction ID for certain payment methods
+    if ((newOrder.paymentMethod === 'airtel' || newOrder.paymentMethod === 'mtn') && !newOrder.transactionId) {
+        return res.status(400).json({ success: false, message: 'Transaction ID is required for Airtel Money and MTN Money payments' });
+    }
+
     // Generate order number as YYYYMMDDHHMMSS
     const now = new Date();
     const year = now.getFullYear();
