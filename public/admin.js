@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading initial data:', error);
     }
 
+    // Polling to fetch and display orders every 5 seconds
+    setInterval(fetchAndDisplayOrders, 5000);
+
     document.body.addEventListener('click', async (event) => {
         if (event.target.classList.contains('btn-primary')) {
             const orderId = event.target.closest('tr').querySelector('td:first-child').textContent;
@@ -42,34 +45,6 @@ async function fetchAndDisplayOrders() {
         console.error('Error fetching orders:', error);
     }
 }
-
-async function updateOrderStatus(orderId, status) {
-    try {
-        const response = await fetch(`/api/orders/${orderId}/status`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to update order status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        if (result.success) {
-            await fetchAndDisplayOrders(); // Refresh the orders after successful update
-        } else {
-            console.error('Server responded with an error:', result.error);
-            // Consider displaying an error message to the user (e.g., using alert() or a more elegant UI element).
-        }
-    } catch (error) {
-        console.error('Error updating order status:', error);
-        // Handle the error gracefully, e.g., by showing a user-friendly message.
-    }
-}
-
 
 async function fetchMenu() {
     const response = await fetch('/api/menu');
@@ -281,23 +256,6 @@ async function deleteExtra(extraId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        await fetchAndDisplayOrders();
-    } catch (error) {
-        console.error('Error loading initial data:', error);
-    }
-});
-
-async function fetchAndDisplayOrders() {
-    try {
-        const orders = await fetchOrders();
-        categorizeOrders(orders);
-    } catch (error) {
-        console.error('Error fetching orders:', error);
-    }
-}
-
 async function fetchOrders() {
     const response = await fetch('/api/orders');
     if (!response.ok) throw new Error('Failed to fetch orders');
@@ -319,14 +277,16 @@ function categorizeOrders(orders) {
 function displayOrders(orders, elementId, nextStatus) {
     const orderList = document.getElementById(elementId);
     orderList.innerHTML = orders.map(order => {
-        // Map each item to a string describing quantity, name, and price
         const itemsDetail = order.items.map(item => `${item.quantity}x ${item.name} at K${item.price.toFixed(2)}`).join('<br>');
 
-        // Prepare buttons for actions
         let buttons = nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.orderNumber}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : '';
         if (elementId === 'completedOrderList') {
             buttons += ` <button class="btn btn-danger" onclick="deleteOrder('${order.orderNumber}')">Delete</button>`;
         }
+
+        const deliveryStatus = order.delivery 
+            ? (order.deliveryFee === 5 ? 'Yes (GRU Campus)' : 'Yes (Outside GRU)')
+            : 'No';
 
         return `
             <tr>
@@ -337,6 +297,8 @@ function displayOrders(orders, elementId, nextStatus) {
                     <strong>Items:</strong><br>${itemsDetail}
                 </td>
                 <td>K${order.total.toFixed(2)}</td>
+                <td>${deliveryStatus}</td>
+                <td>${order.paymentMethod === 'airtel' || order.paymentMethod === 'mtn' ? order.transactionId || 'N/A' : 'N/A'}</td>
                 <td>${buttons}</td>
             </tr>
         `;
@@ -385,7 +347,6 @@ async function updateOrderStatus(orderId, status) {
         console.error('Error updating order status:', error);
     }
 }
-
 
 function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1);

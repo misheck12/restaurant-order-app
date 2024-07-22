@@ -5,17 +5,109 @@
         "name": "Bream",
         "quantity": 1,
         "price": 50
+      },
+      {
+        "name": "beans",
+        "quantity": 1,
+        "price": 5
       }
     ],
     "delivery": true,
     "deliveryFee": 22,
-    "total": 74,
-    "paymentMethod": "mtn",
+    "total": 79,
+    "paymentMethod": "airtel",
     "transactionId": "300994",
     "name": "Misheck Livingi",
-    "phoneNumber": "19895463980",
+    "phoneNumber": "0960231978",
+    "status": "preparing",
+    "orderNumber": "20240722103332",
+    "timestamp": "2024-07-22T08:33:32.928Z"
+  },
+  {
+    "items": [
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "beans",
+        "quantity": 1,
+        "price": 5
+      }
+    ],
+    "delivery": false,
+    "deliveryFee": 5,
+    "total": 107,
+    "paymentMethod": "airtel",
+    "transactionId": "300994",
+    "name": "Misheck Livingi",
+    "phoneNumber": "0960231978",
     "status": "pending",
-    "orderNumber": "20240722092742",
-    "timestamp": "2024-07-22T07:27:42.341Z"
+    "orderNumber": "20240722105624",
+    "timestamp": "2024-07-22T08:56:24.671Z"
+  },
+  {
+    "items": [
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "beans",
+        "quantity": 1,
+        "price": 5
+      }
+    ],
+    "delivery": true,
+    "deliveryFee": 5,
+    "total": 112,
+    "paymentMethod": "airtel",
+    "transactionId": "300994",
+    "name": "Misheck Livingi",
+    "phoneNumber": "9895463980",
+    "status": "pending",
+    "orderNumber": "20240722110053",
+    "timestamp": "2024-07-22T09:00:53.567Z"
+  },
+  {
+    "items": [
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "beans",
+        "quantity": 1,
+        "price": 5
+      }
+    ],
+    "delivery": true,
+    "deliveryFee": 22,
+    "total": 129,
+    "paymentMethod": "cash",
+    "transactionId": null,
+    "name": "BwanguBwangu, Ltd",
+    "phoneNumber": "9895463980",
+    "status": "pending",
+    "orderNumber": "20240722110337",
+    "timestamp": "2024-07-22T09:03:37.099Z"
   }
 ]

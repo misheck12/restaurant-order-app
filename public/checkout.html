@@ -30,7 +30,7 @@
             border-radius: 25px; /* Rounded button */
             margin-top: 20px; /* Margin for spacing */
         }
-        .order-summary, .total, .order-number {
+        .order-summary, .total {
             text-align: center; /* Centered text */
         }
         header.header {
@@ -43,6 +43,29 @@
         header.header h1 {
             margin: 0; /* Remove default margin */
         }
+        .order-number {
+            text-align: center; /* Centered text */
+            font-size: 1.5rem; /* Larger font size */
+            font-weight: bold; /* Bold text */
+            color: #007bff; /* Matching the header color */
+            margin-bottom: 20px; /* Space below */
+        }
+        .order-item {
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 0;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .total-cost {
+            margin-top: 20px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .form-check-label {
+            font-size: 1.1rem;
+            color: #495057;
+        }
     </style>
 </head>
 <body>
@@ -50,6 +73,7 @@
         <h1>Checkout</h1>
     </header>
     <div class="checkout-container">
+        <div class="order-number" id="orderNumber"></div> <!-- Order number here -->
         <div class="checkout-content">
             <div id="orderSummary" class="order-summary"></div>
             <div class="payment-options">
@@ -85,8 +109,7 @@
             <div class="form-group text-center">
                 <button type="button" onclick="submitOrder()" class="btn btn-primary submit-button">Submit Order</button>
             </div>
-            <div class="total" id="totalCost"></div>
-            <div class="order-number" id="orderNumber"></div>
+            <div class="total-cost" id="totalCost"></div>
         </div>
     </div>
 
