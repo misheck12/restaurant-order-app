@@ -4,5 +4,11 @@
     "name": "beans",
     "price": 5,
     "category": "breakfast"
+  },
+  {
+    "id": "1721645355395",
+    "name": "visashi",
+    "price": 6,
+    "category": "breakfast"
   }
 ]
