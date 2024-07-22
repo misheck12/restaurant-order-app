@@ -220,11 +220,28 @@ app.get('/api/orders/export-csv', (req, res) => {
 
 // Generate sales report
 app.get('/api/orders/sales-report', (req, res) => {
-    const totalSales = orders.reduce((sum, order) => sum + order.total, 0);
-    const pendingOrders = orders.filter(order => order.status === 'pending').length;
-    const preparingOrders = orders.filter(order => order.status === 'preparing').length;
-    const readyOrders = orders.filter(order => order.status === 'ready').length;
-    const completedOrders = orders.filter(order => order.status === 'completed').length;
+    const period = req.query.period;
+    const now = new Date();
+    let startDate;
+
+    if (period === 'daily') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (period === 'weekly') {
+        const dayOfWeek = now.getDay();
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek);
+    } else if (period === 'monthly') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else {
+        return res.status(400).json({ success: false, message: 'Invalid period specified' });
+    }
+
+    const filteredOrders = orders.filter(order => new Date(order.timestamp) >= startDate);
+
+    const totalSales = filteredOrders.reduce((sum, order) => sum + order.total, 0);
+    const pendingOrders = filteredOrders.filter(order => order.status === 'pending').length;
+    const preparingOrders = filteredOrders.filter(order => order.status === 'preparing').length;
+    const readyOrders = filteredOrders.filter(order => order.status === 'ready').length;
+    const completedOrders = filteredOrders.filter(order => order.status === 'completed').length;
 
     const report = {
         totalSales,
