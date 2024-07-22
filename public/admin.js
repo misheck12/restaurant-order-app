@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading initial data:', error);
     }
 
-    // Polling to fetch and display orders every 5 seconds
     setInterval(fetchAndDisplayOrders, 5000);
 
     document.body.addEventListener('click', async (event) => {
@@ -369,4 +368,47 @@ function logout() {
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+// New Functions
+
+async function exportToCSV() {
+    try {
+        const response = await fetch('/api/orders/export-csv');
+        if (!response.ok) throw new Error('Failed to export orders');
+        const csvData = await response.text();
+        const blob = new Blob([csvData], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'orders.csv';
+        a.click();
+    } catch (error) {
+        console.error('Error exporting to CSV:', error);
+    }
+}
+
+async function generateSalesReport() {
+    try {
+        const response = await fetch('/api/orders/sales-report');
+        if (!response.ok) throw new Error('Failed to generate sales report');
+        const report = await response.json();
+        displaySalesReport(report);
+    } catch (error) {
+        console.error('Error generating sales report:', error);
+    }
+}
+
+function displaySalesReport(report) {
+    const salesReportDiv = document.getElementById('salesReport');
+    salesReportDiv.innerHTML = `
+        <h4>Total Sales: K${report.totalSales.toFixed(2)}</h4>
+        <h5>Orders Breakdown:</h5>
+        <ul>
+            <li>Pending: ${report.pendingOrders}</li>
+            <li>Preparing: ${report.preparingOrders}</li>
+            <li>Ready: ${report.readyOrders}</li>
+            <li>Completed: ${report.completedOrders}</li>
+        </ul>
+    `;
 }
