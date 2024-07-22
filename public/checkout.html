@@ -106,7 +106,7 @@
             `).join('');
 
             const serviceFee = 2; // Example service fee
-            const deliveryFee = order.deliveryFee || 0; // Use provided delivery fee if available
+            const deliveryFee = order.delivery ? (order.deliveryFee || 0) : 0; // Use provided delivery fee if available
 
             let totalItemsCost = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
             const total = totalItemsCost + serviceFee + deliveryFee;
