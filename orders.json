@@ -52,5 +52,24 @@
     "status": "pending",
     "orderNumber": "20240722091851",
     "timestamp": "2024-07-22T07:18:51.392Z"
+  },
+  {
+    "items": [
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      }
+    ],
+    "delivery": true,
+    "deliveryFee": 22,
+    "total": 74,
+    "paymentMethod": "airtel",
+    "transactionId": "300994",
+    "name": "BwanguBwangu, Ltd",
+    "phoneNumber": "19895463980",
+    "status": "pending",
+    "orderNumber": "20240722092413",
+    "timestamp": "2024-07-22T07:24:13.030Z"
   }
 ]
