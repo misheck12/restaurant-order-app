@@ -55,7 +55,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <a class="navbar-brand" href="#">Roster's Kitchen</a>
-        <div class="collapse navbar-collapse">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link highlight-link" href="./index.html">Make Your Order</a>
@@ -120,7 +123,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchOrderStatus();
-            setInterval(fetchOrderStatus, 10000); // Poll every 30 seconds
+            setInterval(fetchOrderStatus, 30000); // Poll every 30 seconds
         });
     </script>
 </body>
