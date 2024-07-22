@@ -9,57 +9,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function fetchMenu() {
-    try {
-        const response = await fetch('/api/menu');
-        if (!response.ok) {
-            if (response.status === 403) {
-                throw new Error('Permission denied: You do not have access to the menu.');
-            }
-            throw new Error(`Failed to fetch menu: ${response.statusText}`);
-        }
-        return response.json();
-    } catch (error) {
-        console.error('Error fetching menu:', error);
-        throw error;
-    }
+    const response = await fetch('/api/menu');
+    if (!response.ok) throw new Error(`Failed to fetch menu: ${response.statusText}`);
+    return response.json();
 }
 
 async function fetchExtras() {
-    try {
-        const response = await fetch('/api/extras');
-        if (!response.ok) {
-            if (response.status === 403) {
-                throw new Error('Permission denied: You do not have access to the extras.');
-            }
-            throw new Error(`Failed to fetch extras: ${response.statusText}`);
-        }
-        return response.json();
-    } catch (error) {
-        console.error('Error fetching extras:', error);
-        throw error;
-    }
+    const response = await fetch('/api/extras');
+    if (!response.ok) throw new Error(`Failed to fetch extras: ${response.statusText}`);
+    return response.json();
 }
 
 function displayItems(items, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = items.map(item => {
-        // Check if item.price is valid before using toFixed()
-        const priceText = item.price ? `(K${item.price.toFixed(2)} each)` : ''; 
-        return `
-            <div class="menu-card">
-                <div class="menu-card-content">
-                    <span>${item.name} ${priceText}</span>
-                    <div class="quantity-controls">
-                        <button type="button" onclick="updateQuantity('${item.id}', -1)" class="quantity-button">-</button>
-                        <span id="quantity-${item.id}" class="quantity">0</span>
-                        <button type="button" onclick="updateQuantity('${item.id}', 1)" class="quantity-button">+</button>
-                    </div>
+    container.innerHTML = items.map(item => `
+        <div class="menu-card">
+            <div class="menu-card-content">
+                <span>${item.name} (K${item.price.toFixed(2)} each)</span>
+                <div class="quantity-controls">
+                    <button onclick="updateQuantity('${item.id}', -1)" class="quantity-button">-</button>
+                    <span id="quantity-${item.id}" class="quantity">0</span>
+                    <button onclick="updateQuantity('${item.id}', 1)" class="quantity-button">+</button>
                 </div>
             </div>
-        `;
-    }).join('');
+        </div>
+    `).join('');
 }
-
 
 function updateQuantity(itemId, change) {
     const quantityElement = document.getElementById(`quantity-${itemId}`);
@@ -69,10 +44,17 @@ function updateQuantity(itemId, change) {
 }
 
 function calculateTotal() {
-    const serviceFee = 2;
-    const deliveryFee = 5;
-    const delivery = document.getElementById('delivery').checked ? deliveryFee : 0;
-    let total = serviceFee + delivery;
+    let deliveryFee = 0;
+    const deliveryOnGru = document.getElementById('deliveryGru').checked;
+    const deliveryOutsideGru = document.getElementById('deliveryOutsideGru').checked;
+
+    if (deliveryOnGru) {
+        deliveryFee = 5;
+    } else if (deliveryOutsideGru) {
+        deliveryFee = 22;
+    }
+
+    let total = deliveryFee;
 
     document.querySelectorAll('.menu-card').forEach(card => {
         const price = parseFloat(card.querySelector('.menu-card-content span').innerText.match(/K(\d+(\.\d+)?)/)[1]);
@@ -99,7 +81,7 @@ function proceedToCheckout() {
 
     const order = {
         items,
-        delivery: document.getElementById('delivery').checked,
+        delivery: document.getElementById('deliveryGru').checked || document.getElementById('deliveryOutsideGru').checked,
         total
     };
 
