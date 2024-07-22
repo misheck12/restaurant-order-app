@@ -78,7 +78,7 @@ function calculateTotal() {
     const serviceFee = 2;
     let deliveryFee = 5; // Default fee for GRU campus
 
-    const deliveryOnGru = document.getElementById('delivery');
+    const deliveryOnGru = document.getElementById('deliveryGru');
     const deliveryOutsideGru = document.getElementById('deliveryOutsideGru');
 
     if (deliveryOutsideGru && deliveryOutsideGru.checked) {
@@ -116,7 +116,7 @@ function proceedToCheckout() {
         }
     });
 
-    const delivery = document.getElementById('delivery')?.checked || document.getElementById('deliveryOutsideGru')?.checked;
+    const delivery = document.getElementById('deliveryGru')?.checked || document.getElementById('deliveryOutsideGru')?.checked;
 
     const order = {
         items,
