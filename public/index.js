@@ -1,12 +1,39 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const [menu, extras] = await Promise.all([fetchMenu(), fetchExtras()]);
-        displayItems(menu, 'menuContainer');
-        displayItems(extras, 'extrasContainer');
+        await fetchAndDisplayMenu();
+        await fetchAndDisplayExtras();
     } catch (error) {
         console.error('Error fetching and displaying data:', error);
     }
+
+    // Polling to fetch and display menu and extras every 10 seconds
+    setInterval(async () => {
+        try {
+            await fetchAndDisplayMenu();
+            await fetchAndDisplayExtras();
+        } catch (error) {
+            console.error('Error fetching and displaying data during polling:', error);
+        }
+    }, 10000); // 10 seconds interval
 });
+
+async function fetchAndDisplayMenu() {
+    try {
+        const menu = await fetchMenu();
+        displayItems(menu, 'menuContainer');
+    } catch (error) {
+        console.error('Error fetching menu:', error);
+    }
+}
+
+async function fetchAndDisplayExtras() {
+    try {
+        const extras = await fetchExtras();
+        displayItems(extras, 'extrasContainer');
+    } catch (error) {
+        console.error('Error fetching extras:', error);
+    }
+}
 
 async function fetchMenu() {
     try {
