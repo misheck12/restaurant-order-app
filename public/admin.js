@@ -388,21 +388,22 @@ async function exportToCSV() {
     }
 }
 
-async function generateSalesReport() {
+async function generateSalesReport(period) {
     try {
-        const response = await fetch('/api/orders/sales-report');
+        const response = await fetch(`/api/orders/sales-report?period=${period}`);
         if (!response.ok) throw new Error('Failed to generate sales report');
         const report = await response.json();
-        displaySalesReport(report);
+        displaySalesReport(report, period);
     } catch (error) {
         console.error('Error generating sales report:', error);
     }
 }
 
-function displaySalesReport(report) {
+function displaySalesReport(report, period) {
     const salesReportDiv = document.getElementById('salesReport');
     salesReportDiv.innerHTML = `
-        <h4>Total Sales: K${report.totalSales.toFixed(2)}</h4>
+        <h4>${capitalize(period)} Sales Report:</h4>
+        <h5>Total Sales: K${report.totalSales.toFixed(2)}</h5>
         <h5>Orders Breakdown:</h5>
         <ul>
             <li>Pending: ${report.pendingOrders}</li>
