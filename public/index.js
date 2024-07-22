@@ -43,7 +43,6 @@ async function fetchExtras() {
 function displayItems(items, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = items.map(item => {
-        // Check if item.price is valid before using toFixed()
         const priceText = item.price ? `(K${item.price.toFixed(2)} each)` : ''; 
         return `
             <div class="menu-card">
@@ -60,7 +59,6 @@ function displayItems(items, containerId) {
     }).join('');
 }
 
-
 function updateQuantity(itemId, change) {
     const quantityElement = document.getElementById(`quantity-${itemId}`);
     let quantity = parseInt(quantityElement.innerText) || 0;
@@ -70,9 +68,15 @@ function updateQuantity(itemId, change) {
 
 function calculateTotal() {
     const serviceFee = 2;
-    const deliveryFee = 5;
-    const delivery = document.getElementById('delivery').checked ? deliveryFee : 0;
-    let total = serviceFee + delivery;
+    let deliveryFee = 5; // Default fee for GRU campus
+    const deliveryOnGru = document.getElementById('delivery').checked;
+    const deliveryOutsideGru = document.getElementById('deliveryOutsideGru').checked;
+
+    if (deliveryOutsideGru) {
+        deliveryFee = 22; // Fee for outside GRU campus
+    }
+
+    let total = serviceFee + deliveryFee;
 
     document.querySelectorAll('.menu-card').forEach(card => {
         const price = parseFloat(card.querySelector('.menu-card-content span').innerText.match(/K(\d+(\.\d+)?)/)[1]);
@@ -99,7 +103,7 @@ function proceedToCheckout() {
 
     const order = {
         items,
-        delivery: document.getElementById('delivery').checked,
+        delivery: document.getElementById('delivery').checked || document.getElementById('deliveryOutsideGru').checked,
         total
     };
 
