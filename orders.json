@@ -19,7 +19,7 @@
     "transactionId": "300994",
     "name": "Misheck Livingi",
     "phoneNumber": "0960231978",
-    "status": "ready",
+    "status": "completed",
     "orderNumber": "20240722103332",
     "timestamp": "2024-07-22T08:33:32.928Z"
   },
@@ -48,38 +48,9 @@
     "transactionId": "300994",
     "name": "Misheck Livingi",
     "phoneNumber": "0960231978",
-    "status": "ready",
+    "status": "completed",
     "orderNumber": "20240722105624",
     "timestamp": "2024-07-22T08:56:24.671Z"
-  },
-  {
-    "items": [
-      {
-        "name": "Bream",
-        "quantity": 1,
-        "price": 50
-      },
-      {
-        "name": "Bream",
-        "quantity": 1,
-        "price": 50
-      },
-      {
-        "name": "beans",
-        "quantity": 1,
-        "price": 5
-      }
-    ],
-    "delivery": true,
-    "deliveryFee": 5,
-    "total": 112,
-    "paymentMethod": "airtel",
-    "transactionId": "300994",
-    "name": "Misheck Livingi",
-    "phoneNumber": "9895463980",
-    "status": "completed",
-    "orderNumber": "20240722110053",
-    "timestamp": "2024-07-22T09:00:53.567Z"
   },
   {
     "items": [
@@ -106,7 +77,7 @@
     "transactionId": null,
     "name": "BwanguBwangu, Ltd",
     "phoneNumber": "9895463980",
-    "status": "preparing",
+    "status": "completed",
     "orderNumber": "20240722110337",
     "timestamp": "2024-07-22T09:03:37.099Z"
   },
@@ -135,7 +106,7 @@
     "transactionId": null,
     "name": "Misheck Livingi",
     "phoneNumber": "9895463980",
-    "status": "preparing",
+    "status": "completed",
     "orderNumber": "20240722110955",
     "timestamp": "2024-07-22T09:09:55.459Z"
   },
@@ -164,7 +135,7 @@
     "transactionId": null,
     "name": "Misheck Livingi",
     "phoneNumber": "+260763921419",
-    "status": "preparing",
+    "status": "completed",
     "orderNumber": "20240722111107",
     "timestamp": "2024-07-22T09:11:07.855Z"
   }
