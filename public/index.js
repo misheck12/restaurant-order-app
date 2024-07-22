@@ -76,15 +76,15 @@ function updateQuantity(itemId, change) {
 
 function calculateTotal() {
     const serviceFee = 2;
-    let deliveryFee = 5; // Default fee for GRU campus
+    let deliveryFee = 0;
 
     const deliveryOnGru = document.getElementById('deliveryGru');
     const deliveryOutsideGru = document.getElementById('deliveryOutsideGru');
 
     if (deliveryOutsideGru && deliveryOutsideGru.checked) {
         deliveryFee = 22; // Fee for outside GRU campus
-    } else if (!deliveryOnGru || !deliveryOnGru.checked) {
-        deliveryFee = 0; // No delivery selected
+    } else if (deliveryOnGru && deliveryOnGru.checked) {
+        deliveryFee = 5; // Fee for on GRU campus
     }
 
     let total = serviceFee + deliveryFee;
@@ -117,10 +117,12 @@ function proceedToCheckout() {
     });
 
     const delivery = document.getElementById('deliveryGru')?.checked || document.getElementById('deliveryOutsideGru')?.checked;
+    const deliveryFee = delivery && document.getElementById('deliveryOutsideGru')?.checked ? 22 : 5;
 
     const order = {
         items,
         delivery,
+        deliveryFee,
         total
     };
 
