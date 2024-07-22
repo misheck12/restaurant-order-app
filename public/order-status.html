@@ -22,7 +22,6 @@
         }
         .highlight-link {
             font-weight: bold;
-            font-size: 1.2rem;
             background-color: #ffc107;
             color: #343a40 !important;
             padding: 10px 20px;
@@ -30,11 +29,32 @@
             text-align: center;
             margin: 10px;
         }
+        @media (max-width: 576px) {
+            .highlight-link {
+                font-size: 1rem;
+                padding: 8px 16px;
+            }
+        }
+        @media (min-width: 577px) and (max-width: 768px) {
+            .highlight-link {
+                font-size: 1.1rem;
+                padding: 9px 18px;
+            }
+        }
+        @media (min-width: 769px) and (max-width: 992px) {
+            .highlight-link {
+                font-size: 1.2rem;
+                padding: 10px 20px;
+            }
+        }
+        @media (min-width: 993px) {
+            .highlight-link {
+                font-size: 1.3rem;
+                padding: 12px 24px;
+            }
+        }
         .status-container {
             margin-top: 20px;
-        }
-        .highlight-link:hover {
-            background-color: #e0a800;
         }
         .table-container {
             background-color: #f8f9fa;
