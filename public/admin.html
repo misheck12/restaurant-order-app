@@ -186,7 +186,9 @@
                     </section>
                     <section class="sales-report-section">
                         <h2 class="section-title">Sales Report</h2>
-                        <button class="btn btn-primary mb-3" onclick="generateSalesReport()">Generate Report</button>
+                        <button class="btn btn-primary mb-3" onclick="generateSalesReport('daily')">Generate Daily Report</button>
+                        <button class="btn btn-primary mb-3" onclick="generateSalesReport('weekly')">Generate Weekly Report</button>
+                        <button class="btn btn-primary mb-3" onclick="generateSalesReport('monthly')">Generate Monthly Report</button>
                         <div id="salesReport" class="mt-3">
                             <!-- Sales report will be displayed here -->
                         </div>
