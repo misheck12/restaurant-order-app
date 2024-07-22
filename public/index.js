@@ -17,7 +17,7 @@ async function fetchMenu() {
             }
             throw new Error(`Failed to fetch menu: ${response.statusText}`);
         }
-        return response.json();
+        return await response.json();
     } catch (error) {
         console.error('Error fetching menu:', error);
         throw error;
@@ -33,7 +33,7 @@ async function fetchExtras() {
             }
             throw new Error(`Failed to fetch extras: ${response.statusText}`);
         }
-        return response.json();
+        return await response.json();
     } catch (error) {
         console.error('Error fetching extras:', error);
         throw error;
@@ -42,6 +42,10 @@ async function fetchExtras() {
 
 function displayItems(items, containerId) {
     const container = document.getElementById(containerId);
+    if (!container) {
+        console.error(`Container with id ${containerId} not found`);
+        return;
+    }
     container.innerHTML = items.map(item => {
         const priceText = item.price ? `(K${item.price.toFixed(2)} each)` : ''; 
         return `
@@ -61,6 +65,10 @@ function displayItems(items, containerId) {
 
 function updateQuantity(itemId, change) {
     const quantityElement = document.getElementById(`quantity-${itemId}`);
+    if (!quantityElement) {
+        console.error(`Quantity element for item ${itemId} not found`);
+        return;
+    }
     let quantity = parseInt(quantityElement.innerText) || 0;
     quantity = Math.max(0, quantity + change);
     quantityElement.innerText = quantity;
@@ -69,17 +77,21 @@ function updateQuantity(itemId, change) {
 function calculateTotal() {
     const serviceFee = 2;
     let deliveryFee = 5; // Default fee for GRU campus
-    const deliveryOnGru = document.getElementById('delivery').checked;
-    const deliveryOutsideGru = document.getElementById('deliveryOutsideGru').checked;
 
-    if (deliveryOutsideGru) {
+    const deliveryOnGru = document.getElementById('delivery');
+    const deliveryOutsideGru = document.getElementById('deliveryOutsideGru');
+
+    if (deliveryOutsideGru && deliveryOutsideGru.checked) {
         deliveryFee = 22; // Fee for outside GRU campus
+    } else if (!deliveryOnGru || !deliveryOnGru.checked) {
+        deliveryFee = 0; // No delivery selected
     }
 
     let total = serviceFee + deliveryFee;
 
     document.querySelectorAll('.menu-card').forEach(card => {
-        const price = parseFloat(card.querySelector('.menu-card-content span').innerText.match(/K(\d+(\.\d+)?)/)[1]);
+        const priceText = card.querySelector('.menu-card-content span').innerText.match(/K(\d+(\.\d+)?)/);
+        const price = priceText ? parseFloat(priceText[1]) : 0;
         const quantity = parseInt(card.querySelector('.quantity-controls span').innerText) || 0;
         total += price * quantity;
     });
@@ -90,20 +102,25 @@ function calculateTotal() {
 function proceedToCheckout() {
     const total = calculateTotal();
     const items = [];
+
     document.querySelectorAll('.menu-card').forEach(card => {
         const quantity = parseInt(card.querySelector('.quantity-controls span').innerText) || 0;
         if (quantity > 0) {
+            const priceText = card.querySelector('.menu-card-content span').innerText.match(/K(\d+(\.\d+)?)/);
+            const price = priceText ? parseFloat(priceText[1]) : 0;
             items.push({
                 name: card.querySelector('.menu-card-content span').innerText.split(' (')[0],
                 quantity,
-                price: parseFloat(card.querySelector('.menu-card-content span').innerText.match(/K(\d+(\.\d+)?)/)[1])
+                price
             });
         }
     });
 
+    const delivery = document.getElementById('delivery')?.checked || document.getElementById('deliveryOutsideGru')?.checked;
+
     const order = {
         items,
-        delivery: document.getElementById('delivery').checked || document.getElementById('deliveryOutsideGru').checked,
+        delivery,
         total
     };
 
