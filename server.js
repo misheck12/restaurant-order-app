@@ -7,6 +7,7 @@ const path = require('path');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const { Parser } = require('json2csv');
 
 const app = express();
 const port = process.env.PORT || 3000; // Use the PORT environment variable
@@ -205,6 +206,35 @@ app.get('/api/orders/status/:orderNumber', (req, res) => {
         return res.status(404).json({ success: false, message: 'Order not found' });
     }
     res.json({ success: true, status: order.status });
+});
+
+// Export orders to CSV
+app.get('/api/orders/export-csv', (req, res) => {
+    const fields = ['orderNumber', 'name', 'total', 'delivery', 'transactionId', 'status'];
+    const parser = new Parser({ fields });
+    const csv = parser.parse(orders);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('orders.csv');
+    return res.send(csv);
+});
+
+// Generate sales report
+app.get('/api/orders/sales-report', (req, res) => {
+    const totalSales = orders.reduce((sum, order) => sum + order.total, 0);
+    const pendingOrders = orders.filter(order => order.status === 'pending').length;
+    const preparingOrders = orders.filter(order => order.status === 'preparing').length;
+    const readyOrders = orders.filter(order => order.status === 'ready').length;
+    const completedOrders = orders.filter(order => order.status === 'completed').length;
+
+    const report = {
+        totalSales,
+        pendingOrders,
+        preparingOrders,
+        readyOrders,
+        completedOrders
+    };
+
+    res.json(report);
 });
 
 // Serve static files from the 'public' directory
