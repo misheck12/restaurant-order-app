@@ -57,9 +57,9 @@
                 <div class="form-group">
                     <label for="paymentMethod">Select Payment Method:</label>
                     <select id="paymentMethod" name="paymentMethod" class="form-control" required>
+                        <option value="cash">Cash</option>
                         <option value="airtel">Airtel Money</option>
                         <option value="mtn">MTN Money</option>
-                        <option value="cash">Cash</option>
                     </select>
                 </div>
                 <div class="form-group" id="transactionIdGroup" style="display: none;">
@@ -151,7 +151,7 @@
             }
 
             order.paymentMethod = document.getElementById('paymentMethod').value;
-            order.transactionId = document.getElementById('transactionId').value;
+            order.transactionId = document.getElementById('transactionId').value || null; // Set to null if not applicable
             order.name = document.getElementById('name').value;
             order.phoneNumber = document.getElementById('phoneNumber').value;
             order.status = 'pending';
