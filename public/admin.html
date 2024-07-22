@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <title>Admin Panel</title>
     <style>
         body {
@@ -16,8 +16,10 @@
         .container {
             max-width: 1200px;
         }
-        .section {
+        .menu-section, .extras-section, .orders-section, .sales-report-section {
             margin-bottom: 30px;
+        }
+        .menu-section, .extras-section, .orders-section, .sales-report-section {
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -46,14 +48,14 @@
             max-height: 300px;
             overflow-y: auto;
         }
-        .item-list .item {
+        .item-list .menu-item, .item-list .extra-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px;
             border-bottom: 1px solid #dee2e6;
         }
-        .item-list .item:last-child {
+        .item-list .menu-item:last-child, .item-list .extra-item:last-child {
             border-bottom: none;
         }
         .item-list span {
@@ -88,10 +90,8 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Admin Panel</a>
-            <button class="btn btn-danger ms-auto" onclick="logout()">Logout</button>
-        </div>
+        <a class="navbar-brand" href="#">Admin Panel</a>
+        <button class="btn btn-danger ml-auto" onclick="logout()">Logout</button>
     </nav>
     <div class="container mt-5">
         <header class="pb-3 mt-5">
@@ -100,7 +100,7 @@
         <main>
             <div class="row">
                 <div class="col-12">
-                    <section class="orders-section section">
+                    <section class="orders-section">
                         <h2 class="section-title">Orders</h2>
                         <button class="btn btn-primary mb-3" onclick="exportToCSV()">Export to CSV</button>
                         <div class="order-category mt-3" id="pendingOrders">
@@ -184,21 +184,18 @@
                             </div>
                         </div>
                     </section>
-                    <section class="sales-report-section section">
+                    <section class="sales-report-section">
                         <h2 class="section-title">Sales Report</h2>
                         <button class="btn btn-primary mb-3" onclick="generateSalesReport()">Generate Report</button>
                         <div id="salesReport" class="mt-3">
-                            <div class="sales-summary">
-                                <p><strong>Total Sales from Completed Orders:</strong> K<span id="totalSales">0.00</span></p>
-                                <p><strong>Total Transaction Fees:</strong> K<span id="totalTransactionFees">0.00</span></p>
-                            </div>
+                            <!-- Sales report will be displayed here -->
                         </div>
                     </section>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-6 col-md-12 mb-3">
-                    <section class="menu-section section">
+                    <section class="menu-section">
                         <h2 class="section-title">Menu</h2>
                         <form id="menuForm">
                             <div class="form-group">
@@ -219,7 +216,7 @@
                     </section>
                 </div>
                 <div class="col-lg-6 col-md-12 mb-3">
-                    <section class="extras-section section">
+                    <section class="extras-section">
                         <h2 class="section-title">Extras</h2>
                         <form id="extrasForm">
                             <div class="form-group">
@@ -256,11 +253,5 @@
     </footer>
 
     <script src="./admin.js"></script>
-    <script>
-        // Fetch and display sales report on page load
-        document.addEventListener('DOMContentLoaded', (event) => {
-            generateSalesReport();
-        });
-    </script>
 </body>
 </html>
