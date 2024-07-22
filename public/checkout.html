@@ -93,22 +93,23 @@
         });
 
         function displayOrder(order) {
+            if (!order) {
+                document.getElementById('orderSummary').innerText = 'No order found.';
+                return;
+            }
+
             const orderSummary = document.getElementById('orderSummary');
             const itemsList = order.items.map(item => `
                 <div class="order-item">
-                    <span>${item.name} (K${item.price} each): ${item.quantity}</span>
+                    <span>${item.name} (K${item.price.toFixed(2)} each): ${item.quantity}</span>
                 </div>
             `).join('');
 
             const serviceFee = 2; // Example service fee
-            const deliveryFee = 5; // Example delivery fee
-            let totalItemsCost = 0;
+            const deliveryFee = order.deliveryFee || 0; // Use provided delivery fee if available
 
-            order.items.forEach(item => {
-                totalItemsCost += item.price * item.quantity;
-            });
-
-            const total = totalItemsCost + serviceFee + (order.delivery ? deliveryFee : 0);
+            let totalItemsCost = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const total = totalItemsCost + serviceFee + deliveryFee;
 
             orderSummary.innerHTML = `
                 <h2>Order Summary</h2>
@@ -118,10 +119,17 @@
                 ${order.delivery ? `<div class="delivery-fee">Delivery Fee: K${deliveryFee.toFixed(2)}</div>` : ''}
                 <div class="total-with-fees">Total with Fees: K${total.toFixed(2)}</div>
             `;
+
+            document.getElementById('totalCost').innerText = `Total Cost: K${total.toFixed(2)}`;
         }
 
         async function submitOrder() {
             const order = JSON.parse(localStorage.getItem('order'));
+            if (!order) {
+                alert('No order found. Please go back and place an order.');
+                return;
+            }
+
             order.paymentMethod = document.getElementById('paymentMethod').value;
             order.name = document.getElementById('name').value;
             order.phoneNumber = document.getElementById('phoneNumber').value;
@@ -137,19 +145,18 @@
                 });
 
                 const result = await response.json();
-                if (result.success) {
-                    document.getElementById('totalCost').innerText = `Total Cost: K${order.total}`;
+                if (response.ok && result.success) {
                     document.getElementById('orderNumber').innerText = `Order Number: ${result.orderNumber}`;
                     localStorage.removeItem('order');
                     setTimeout(() => {
                         window.location.href = './order-status.html';
                     }, 8000);
                 } else {
-                    document.getElementById('orderNumber').innerText = 'Failed to submit order.';
+                    document.getElementById('orderNumber').innerText = 'Failed to submit order. Please try again.';
                 }
             } catch (error) {
                 console.error('Error submitting order:', error);
-                document.getElementById('orderNumber').innerText = 'Failed to submit order.';
+                document.getElementById('orderNumber').innerText = 'Failed to submit order. Please try again.';
             }
         }
     </script>
