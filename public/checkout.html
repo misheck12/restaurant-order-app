@@ -6,33 +6,42 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Checkout</title>
     <style>
-        /* Additional inline styles for transparency */
         body {
-            background-color: #f0f0f0; /* Setting a light gray background */
+            background-color: #f8f9fa; /* Light background color */
         }
         .checkout-container {
-            max-width: 600px; /* Limiting container width for better readability */
-            margin: 20px auto; /* Centering the container */
+            max-width: 700px; /* Adjusting max-width for readability */
+            margin: 30px auto; /* Centering the container */
             background-color: #fff; /* White background */
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
-            border-radius: 5px; /* Rounded corners */
+            padding: 30px; /* Padding for content spacing */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            border-radius: 10px; /* Rounded corners */
         }
         .payment-options {
-            margin-top: 20px; /* Adding margin between payment options and other content */
+            margin-top: 30px; /* Margin for separation */
         }
-        .payment-options .withdrawal-info {
-            margin-top: 10px;
-            font-size: 0.9rem;
+        .withdrawal-info {
+            margin-top: 10px; /* Margin between elements */
+            font-size: 0.9rem; /* Slightly smaller font */
         }
         .submit-button {
-            display: block;
+            display: block; /* Full width button */
             width: 100%;
-            border-radius: 25px;
-            margin-top: 20px;
+            border-radius: 25px; /* Rounded button */
+            margin-top: 20px; /* Margin for spacing */
         }
         .order-summary, .total, .order-number {
-            text-align: center;
+            text-align: center; /* Centered text */
+        }
+        header.header {
+            background-color: #007bff; /* Blue background for header */
+            color: white; /* White text for contrast */
+            padding: 10px 0; /* Padding for spacing */
+            border-radius: 10px 10px 0 0; /* Rounded top corners */
+            margin-bottom: -10px; /* Overlap margin to blend with container */
+        }
+        header.header h1 {
+            margin: 0; /* Remove default margin */
         }
     </style>
 </head>
@@ -91,7 +100,6 @@
                 </div>
             `).join('');
 
-            // Calculate service fee and delivery fee
             const serviceFee = 2; // Example service fee
             const deliveryFee = 5; // Example delivery fee
             let totalItemsCost = 0;
@@ -117,8 +125,6 @@
             order.paymentMethod = document.getElementById('paymentMethod').value;
             order.name = document.getElementById('name').value;
             order.phoneNumber = document.getElementById('phoneNumber').value;
-
-            // Add 'pending' status to the order
             order.status = 'pending';
 
             try {
@@ -135,10 +141,9 @@
                     document.getElementById('totalCost').innerText = `Total Cost: K${order.total}`;
                     document.getElementById('orderNumber').innerText = `Order Number: ${result.orderNumber}`;
                     localStorage.removeItem('order');
-                    // Redirect to order status page after 8 seconds
                     setTimeout(() => {
                         window.location.href = './order-status.html';
-                    }, 8000); // 8000 milliseconds = 8 seconds
+                    }, 8000);
                 } else {
                     document.getElementById('orderNumber').innerText = 'Failed to submit order.';
                 }

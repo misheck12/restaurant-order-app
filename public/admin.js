@@ -319,8 +319,14 @@ function categorizeOrders(orders) {
 function displayOrders(orders, elementId, nextStatus) {
     const orderList = document.getElementById(elementId);
     orderList.innerHTML = orders.map(order => {
-        // Create a string that lists each item in the order
-        const itemsDetail = order.items.map(item => `${item.quantity}x ${item.name} @ K${item.price.toFixed(2)}`).join('<br>');
+        // Map each item to a string describing quantity, name, and price
+        const itemsDetail = order.items.map(item => `${item.quantity}x ${item.name} at K${item.price.toFixed(2)}`).join('<br>');
+
+        // Prepare buttons for actions
+        let buttons = nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.orderNumber}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : '';
+        if (elementId === 'completedOrderList') {
+            buttons += ` <button class="btn btn-danger" onclick="deleteOrder('${order.orderNumber}')">Delete</button>`;
+        }
 
         return `
             <tr>
@@ -331,12 +337,34 @@ function displayOrders(orders, elementId, nextStatus) {
                     <strong>Items:</strong><br>${itemsDetail}
                 </td>
                 <td>K${order.total.toFixed(2)}</td>
-                <td>
-                    ${nextStatus ? `<button class="btn btn-primary" onclick="updateOrderStatus('${order.orderNumber}', '${nextStatus}')">${capitalize(nextStatus)}</button>` : ''}
-                </td>
+                <td>${buttons}</td>
             </tr>
         `;
     }).join('');
+}
+
+async function deleteOrder(orderNumber) {
+    const confirmation = confirm('Are you sure you want to delete this order?');
+    if (!confirmation) return;
+
+    try {
+        const response = await fetch(`/api/orders/${orderNumber}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert('Order deleted successfully.');
+            await fetchAndDisplayOrders();  // Refresh the list of orders
+        } else {
+            throw new Error('Failed to delete the order.');
+        }
+    } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('Error deleting order. Please try again.');
+    }
 }
 
 async function updateOrderStatus(orderId, status) {
@@ -358,30 +386,6 @@ async function updateOrderStatus(orderId, status) {
     }
 }
 
-async function deleteOrder(orderNumber) {
-    const confirmation = confirm('Are you sure you want to delete this order?');
-    if (!confirmation) return;
-
-    try {
-        const response = await fetch(`/api/orders/${orderNumber}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            alert('Order deleted successfully.');
-            // Refresh the list of orders
-            await fetchAndDisplayOrders();
-        } else {
-            throw new Error('Failed to delete the order.');
-        }
-    } catch (error) {
-        console.error('Error deleting order:', error);
-        alert('Error deleting order. Please try again.');
-    }
-}
 
 function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1);
