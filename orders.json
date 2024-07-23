@@ -138,5 +138,29 @@
     "status": "completed",
     "orderNumber": "20240722111107",
     "timestamp": "2024-07-22T09:11:07.855Z"
+  },
+  {
+    "items": [
+      {
+        "name": "Bream",
+        "quantity": 1,
+        "price": 50
+      },
+      {
+        "name": "visashi",
+        "quantity": 1,
+        "price": 7
+      }
+    ],
+    "delivery": true,
+    "deliveryFee": 5,
+    "total": 64,
+    "paymentMethod": "cash",
+    "transactionId": null,
+    "name": "Bwangu-Bwangu pickup n delivery",
+    "phoneNumber": "9895463980",
+    "status": "pending",
+    "orderNumber": "20240723092933",
+    "timestamp": "2024-07-23T07:29:33.209Z"
   }
 ]
