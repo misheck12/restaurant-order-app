@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Error fetching and displaying data during polling:', error);
         }
-    }, 10000); // 10 seconds interval
+    }, 30000); // 10 seconds interval
 });
 
 async function fetchAndDisplayMenu() {
