@@ -66,6 +66,49 @@
             font-size: 1.1rem;
             color: #495057;
         }
+
+        /* Responsive Design */
+        @media (max-width: 767.98px) {
+            .checkout-container {
+                margin: 20px 10px; /* Reduce margin for smaller screens */
+                padding: 20px; /* Reduce padding for smaller screens */
+            }
+            .header {
+                padding: 10px; /* Adjust padding for smaller screens */
+            }
+            .header h1 {
+                font-size: 1.5rem; /* Reduce font size for smaller screens */
+            }
+            .order-number {
+                font-size: 1.2rem; /* Adjust font size for smaller screens */
+                margin-bottom: 15px; /* Adjust margin for smaller screens */
+            }
+            .total-cost {
+                font-size: 1rem; /* Adjust font size for smaller screens */
+                margin-top: 15px; /* Adjust margin for smaller screens */
+            }
+            .withdrawal-info {
+                font-size: 0.85rem; /* Adjust font size for smaller screens */
+            }
+        }
+        @media (max-width: 575.98px) {
+            .checkout-container {
+                margin: 10px 5px; /* Further reduce margin for extra small screens */
+                padding: 15px; /* Further reduce padding for extra small screens */
+            }
+            .header h1 {
+                font-size: 1.25rem; /* Further reduce font size for extra small screens */
+            }
+            .order-number {
+                font-size: 1rem; /* Further adjust font size for extra small screens */
+            }
+            .total-cost {
+                font-size: 0.9rem; /* Further adjust font size for extra small screens */
+            }
+            .withdrawal-info {
+                font-size: 0.8rem; /* Further adjust font size for extra small screens */
+            }
+        }
     </style>
 </head>
 <body>
