@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - Restaurant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Order History</h1>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="menu.html">Menu</a>
+                <a href="cart.html">Cart</a>
+                <button id="logoutBtn">Logout</button>
+            </nav>
+        </header>
+
+        <main>
+            <div id="loginPrompt" class="hidden">
+                <p>Please <a href="login.html">login</a> to view your order history.</p>
+            </div>
+
+            <div id="orderHistory">
+                <div id="loading">Loading order history...</div>
+                <div id="noOrders" class="hidden">
+                    <p>You haven't placed any orders yet.</p>
+                    <a href="menu.html" class="btn">Browse Menu</a>
+                </div>
+                <div id="ordersList"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/order-history.js"></script>
+</body>
+</html>
