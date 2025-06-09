@@ -61,10 +61,29 @@
             margin-top: 20px;
             font-size: 1.25rem;
             font-weight: bold;
-        }
-        .form-check-label {
+        }        .form-check-label {
             font-size: 1.1rem;
             color: #495057;
+        }
+        .order-type {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .discount {
+            color: #28a745;
+            font-weight: bold;
+        }
+        #deliveryAddress {
+            position: relative;
+        }
+        .pac-container {
+            z-index: 1051 !important;
+        }
+        #addressError {
+            font-size: 0.875rem;
         }
 
         /* Responsive Design */
@@ -143,10 +162,19 @@
                 <div class="form-group">
                     <label for="name">Full Name:</label>
                     <input type="text" id="name" name="name" class="form-control" required>
-                </div>
-                <div class="form-group">
+                </div>                <div class="form-group">
                     <label for="phoneNumber">Mobile Number:</label>
                     <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" required>
+                </div>
+                <div class="form-group" id="deliveryAddressGroup" style="display: none;">
+                    <label for="deliveryAddress">Delivery Address:</label>
+                    <input type="text" id="deliveryAddress" name="deliveryAddress" class="form-control" placeholder="Start typing your address...">
+                    <small class="form-text text-muted">Type your address and select from the suggestions for accurate delivery.</small>
+                    <div id="addressError" class="text-danger mt-2" style="display: none;"></div>
+                </div>
+                <div class="form-group" id="deliveryNotesGroup" style="display: none;">
+                    <label for="deliveryNotes">Delivery Notes (Optional):</label>
+                    <textarea id="deliveryNotes" name="deliveryNotes" class="form-control" rows="2" placeholder="Any special instructions for delivery..."></textarea>
                 </div>
             </div>
             <div class="form-group text-center">
@@ -154,21 +182,70 @@
             </div>
             <div class="total-cost" id="totalCost"></div>
         </div>
-    </div>
-
+    </div>    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_PLACES_API_KEY&libraries=places"></script>
     <script>
+        let autocomplete;
+        let selectedAddress = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             const order = JSON.parse(localStorage.getItem('order'));
             displayOrder(order);
+            initializeAddressAutocomplete();
 
             const paymentMethodSelect = document.getElementById('paymentMethod');
             paymentMethodSelect.addEventListener('change', handlePaymentMethodChange);
         });
 
-        function displayOrder(order) {
+        function initializeAddressAutocomplete() {
+            const addressInput = document.getElementById('deliveryAddress');
+            
+            // Check if Google Places API is available
+            if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+                console.warn('Google Places API not available. Address autocomplete will be disabled.');
+                return;
+            }
+
+            autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                types: ['address'],
+                componentRestrictions: { country: 'zm' } // Restrict to Zambia
+            });
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    document.getElementById('addressError').textContent = 'Please select a valid address from the suggestions.';
+                    document.getElementById('addressError').style.display = 'block';
+                    selectedAddress = null;
+                } else {
+                    document.getElementById('addressError').style.display = 'none';
+                    selectedAddress = {
+                        formatted_address: place.formatted_address,
+                        place_id: place.place_id,
+                        geometry: {
+                            lat: place.geometry.location.lat(),
+                            lng: place.geometry.location.lng()
+                        }
+                    };
+                }
+            });
+        }        function displayOrder(order) {
             if (!order) {
                 document.getElementById('orderSummary').innerText = 'No order found.';
                 return;
+            }
+
+            // Show/hide delivery address fields based on order type
+            const deliveryAddressGroup = document.getElementById('deliveryAddressGroup');
+            const deliveryNotesGroup = document.getElementById('deliveryNotesGroup');
+            
+            if (order.delivery) {
+                deliveryAddressGroup.style.display = 'block';
+                deliveryNotesGroup.style.display = 'block';
+                document.getElementById('deliveryAddress').required = true;
+            } else {
+                deliveryAddressGroup.style.display = 'none';
+                deliveryNotesGroup.style.display = 'none';
+                document.getElementById('deliveryAddress').required = false;
             }
 
             const orderSummary = document.getElementById('orderSummary');
@@ -182,15 +259,32 @@
             const deliveryFee = order.deliveryFee || 0; // Use provided delivery fee if available
 
             let totalItemsCost = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            const total = totalItemsCost + serviceFee + deliveryFee;
+            
+            // Apply discount if available
+            let discount = 0;
+            if (order.discount && order.discount.amount > 0) {
+                discount = order.discount.amount;
+            }
+            
+            const subtotalAfterDiscount = totalItemsCost - discount;
+            const total = subtotalAfterDiscount + serviceFee + deliveryFee;
+
+            let discountHtml = '';
+            if (discount > 0) {
+                discountHtml = `<div class="discount">Discount (${order.discount.code}): -K${discount.toFixed(2)}</div>`;
+            }
 
             orderSummary.innerHTML = `
                 <h2>Order Summary</h2>
+                <div class="order-type">
+                    <strong>Order Type: ${order.delivery ? 'Delivery' : 'Pickup'}</strong>
+                </div>
                 ${itemsList}
-                <div class="order-total">Total: K${totalItemsCost.toFixed(2)}</div>
+                <div class="order-total">Subtotal: K${totalItemsCost.toFixed(2)}</div>
+                ${discountHtml}
                 <div class="service-fee">Service Fee: K${serviceFee.toFixed(2)}</div>
                 ${order.delivery ? `<div class="delivery-fee">Delivery Fee: K${deliveryFee.toFixed(2)}</div>` : ''}
-                <div class="total-with-fees">Total with Fees: K${total.toFixed(2)}</div>
+                <div class="total-with-fees"><strong>Total: K${total.toFixed(2)}</strong></div>
             `;
 
             document.getElementById('totalCost').innerText = `Total Cost: K${total.toFixed(2)}`;
@@ -207,24 +301,58 @@
                 transactionIdGroup.style.display = 'none';
                 document.getElementById('transactionId').required = false;
             }
-        }
-
-        async function submitOrder() {
+        }        async function submitOrder() {
             const order = JSON.parse(localStorage.getItem('order'));
             if (!order) {
                 alert('No order found. Please go back and place an order.');
                 return;
             }
 
-            order.paymentMethod = document.getElementById('paymentMethod').value;
-            order.transactionId = document.getElementById('transactionId').value || null; // Set to null if not applicable
-            order.name = document.getElementById('name').value;
-            order.phoneNumber = document.getElementById('phoneNumber').value;
-            order.status = 'pending';
+            // Basic form validation
+            const name = document.getElementById('name').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const transactionId = document.getElementById('transactionId').value.trim();
 
-            if ((order.paymentMethod === 'airtel' || order.paymentMethod === 'mtn') && !order.transactionId) {
+            if (!name || !phoneNumber) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if ((paymentMethod === 'airtel' || paymentMethod === 'mtn') && !transactionId) {
                 alert('Please provide the transaction ID for the selected payment method.');
                 return;
+            }
+
+            // Validate delivery address if delivery is selected
+            if (order.delivery) {
+                const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+                if (!deliveryAddress) {
+                    alert('Please enter a delivery address.');
+                    return;
+                }
+                
+                if (!selectedAddress && typeof google !== 'undefined') {
+                    alert('Please select a valid address from the suggestions.');
+                    return;
+                }
+            }
+
+            // Prepare order data
+            order.paymentMethod = paymentMethod;
+            order.transactionId = transactionId || null;
+            order.name = name;
+            order.phoneNumber = phoneNumber;
+            order.status = 'pending';
+
+            // Add delivery information if applicable
+            if (order.delivery) {
+                order.deliveryAddress = {
+                    address: document.getElementById('deliveryAddress').value.trim(),
+                    notes: document.getElementById('deliveryNotes').value.trim() || null,
+                    coordinates: selectedAddress ? selectedAddress.geometry : null,
+                    placeId: selectedAddress ? selectedAddress.place_id : null
+                };
             }
 
             try {
@@ -240,15 +368,21 @@
                 if (response.ok && result.success) {
                     document.getElementById('orderNumber').innerText = `Order Number: ${result.orderNumber}`;
                     localStorage.removeItem('order');
+                    
+                    // Show success message
+                    alert(`Order submitted successfully! Your order number is ${result.orderNumber}. You will be redirected to the order status page.`);
+                    
                     setTimeout(() => {
                         window.location.href = './order-status.html';
-                    }, 8000);
+                    }, 3000);
                 } else {
-                    document.getElementById('orderNumber').innerText = 'Failed to submit order. Please try again.';
+                    document.getElementById('orderNumber').innerText = result.message || 'Failed to submit order. Please try again.';
+                    alert(result.message || 'Failed to submit order. Please try again.');
                 }
             } catch (error) {
                 console.error('Error submitting order:', error);
                 document.getElementById('orderNumber').innerText = 'Failed to submit order. Please try again.';
+                alert('Network error. Please check your connection and try again.');
             }
         }
     </script>

@@ -1,0 +1,16 @@
+[
+  {
+    "code": "WELCOME10",
+    "type": "percent",
+    "amount": 10,
+    "description": "10% off your first order",
+    "active": true
+  },
+  {
+    "code": "SAVE5",
+    "type": "flat",
+    "amount": 5,
+    "description": "K5 off any order",
+    "active": true
+  }
+]

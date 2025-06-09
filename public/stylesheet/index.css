@@ -124,3 +124,36 @@ body {
 .submit-button:hover {
     background-color: #0056b3;
 }
+
+/* Order summary styles */
+.order-summary {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    margin-top: 30px;
+}
+.order-summary h2 {
+    margin-bottom: 15px;
+    color: #007bff;
+}
+.order-summary div {
+    margin-bottom: 8px;
+}
+
+/* Toast styles */
+.toast {
+    min-width: 200px;
+}
+.toast-body {
+    font-size: 0.9rem;
+}
+.toast-success {
+    border-left: 4px solid #28a745;
+}
+.toast-info {
+    border-left: 4px solid #17a2b8;
+}
+.toast-error {
+    border-left: 4px solid #dc3545;
+}

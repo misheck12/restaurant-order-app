@@ -1,22 +1,44 @@
 [
   {
     "id": "1721603775203",
-    "name": "Bream",
-    "price": 50
+    "name": "Grilled Bream",
+    "price": 50,
+    "category": "Main Dishes",
+    "description": "Fresh grilled bream with local spices"
   },
   {
     "id": "1721637155073",
-    "name": "Bream",
-    "price": 50
+    "name": "Fried Chicken",
+    "price": 45,
+    "category": "Main Dishes",
+    "description": "Crispy fried chicken with herbs"
   },
   {
     "id": "1721645343453",
-    "name": "Bream",
-    "price": 50
+    "name": "Rice & Beans",
+    "price": 25,
+    "category": "Sides",
+    "description": "Traditional rice and beans combo"
   },
   {
     "id": "1721680598200",
-    "name": "bream",
-    "price": 50
+    "name": "Vegetable Salad",
+    "price": 15,
+    "category": "Sides",
+    "description": "Fresh mixed vegetable salad"
+  },
+  {
+    "id": "1721680598201",
+    "name": "Coca Cola",
+    "price": 8,
+    "category": "Beverages",
+    "description": "Cold soft drink"
+  },
+  {
+    "id": "1721680598202",
+    "name": "Fresh Juice",
+    "price": 12,
+    "category": "Beverages",
+    "description": "Freshly squeezed fruit juice"
   }
 ]
